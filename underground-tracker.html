@@ -1,0 +1,358 @@
+REPLACE_MARKER
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #0a0e1a; color: #e6edf3; min-height: 100vh; }
+.header { background: linear-gradient(135deg, #0d1b2a, #1a0a0a); border-bottom: 3px solid #ff4444; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; }
+.header h1 { font-size: 1.6rem; color: #ff4444; display: flex; align-items: center; gap: 12px; }
+.header .subtitle { color: #8b949e; font-size: 0.88rem; margin-top: 4px; }
+.status-bar { display: flex; align-items: center; gap: 8px; background: #0d2a1a; border: 1px solid #196127; padding: 8px 16px; border-radius: 20px; }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; background: #3fb950; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+.status-text { color: #56d364; font-size: 0.85rem; font-weight: 600; }
+.main { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 32px; max-width: 1200px; margin: 0 auto; }
+@media(max-width:768px){ .main { grid-template-columns: 1fr; } }
+.card { background: #161b22; border: 1px solid #30363d; border-radius: 16px; overflow: hidden; }
+.card-header { padding: 18px 22px; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 12px; }
+.card-header h2 { font-size: 1rem; font-weight: 700; }
+.card-body { padding: 22px; }
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.scenario-btn { padding: 16px 12px; border-radius: 12px; border: 2px solid; cursor: pointer; text-align: center; transition: all 0.2s; background: transparent; color: inherit; font-family: inherit; }
+.scenario-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+.btn-icon { font-size: 2rem; margin-bottom: 8px; }
+.btn-title { font-weight: 700; font-size: 0.92rem; display: block; }
+.btn-sub { font-size: 0.75rem; margin-top: 4px; opacity: 0.7; display: block; }
+.btn-panic { border-color: #ff4444; color: #ff6b6b; }
+.btn-panic:hover { background: rgba(255,68,68,0.1); }
+.btn-gas { border-color: #f0b429; color: #f0b429; }
+.btn-gas:hover { background: rgba(240,180,41,0.1); }
+.btn-fall { border-color: #ff7b72; color: #ff7b72; }
+.btn-fall:hover { background: rgba(255,123,114,0.1); }
+.btn-fire { border-color: #ff6b35; color: #ff6b35; }
+.btn-fire:hover { background: rgba(255,107,53,0.1); }
+.btn-sms { border-color: #3fb950; color: #56d364; width: 100%; margin-top: 12px; padding: 14px; }
+.btn-sms:hover { background: rgba(63,185,80,0.1); }
+.btn-call { border-color: #388bfd; color: #79c0ff; width: 100%; margin-top: 8px; padding: 14px; }
+.btn-call:hover { background: rgba(56,139,253,0.1); }
+.call-status { text-align: center; padding: 24px; }
+.call-icon { font-size: 4rem; margin-bottom: 16px; }
+.call-icon.ringing { animation: ring 0.5s infinite alternate; }
+@keyframes ring { from{transform:rotate(-15deg);} to{transform:rotate(15deg);} }
+.phone-display { background: #0d1117; border: 2px solid #30363d; border-radius: 12px; padding: 16px; margin: 16px 0; font-family: monospace; font-size: 1.1rem; color: #56d364; letter-spacing: 2px; }
+.call-progress { height: 6px; background: #21262d; border-radius: 3px; margin: 16px 0; overflow: hidden; }
+.call-progress-bar { height: 100%; border-radius: 3px; width: 0%; transition: width 0.3s; }
+.log-list { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; }
+.log-item { background: #0d1117; border: 1px solid #21262d; border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start; animation: slideIn 0.3s ease; }
+@keyframes slideIn { from{opacity:0;transform:translateY(-8px);} to{opacity:1;transform:translateY(0);} }
+.log-badge { padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+.badge-call { background: #0d1f3c; color: #79c0ff; border: 1px solid #388bfd; }
+.badge-sms { background: #0d2a1a; color: #56d364; border: 1px solid #3fb950; }
+.badge-alert { background: #2d0d0d; color: #ff7b72; border: 1px solid #ff4444; }
+.log-content .log-title { font-size: 0.88rem; font-weight: 600; color: #e6edf3; }
+.log-content .log-msg { font-size: 0.78rem; color: #8b949e; margin-top: 3px; }
+.log-content .log-time { font-size: 0.72rem; color: #6e7681; margin-top: 2px; }
+.log-status { margin-left: auto; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; flex-shrink: 0; }
+.status-sent { background: #0d2a1a; color: #56d364; }
+.status-calling { background: #0d1f3c; color: #79c0ff; }
+.status-failed { background: #2d0d0d; color: #ff7b72; }
+.status-pending { background: #21262d; color: #8b949e; }
+.flow-box { flex: 1; background: #0d1117; border-radius: 10px; padding: 14px 16px; border: 2px solid; text-align: center; }
+.flow-box.hardware { border-color: #3fb950; }
+.flow-box.backend { border-color: #f0b429; }
+.flow-box.twilio { border-color: #388bfd; }
+.flow-box.phone { border-color: #ff4444; }
+.proof-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+.proof-item { background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 14px; text-align: center; }
+.alert-banner { display: none; background: linear-gradient(135deg, #2d0000, #1a0000); border: 2px solid #ff4444; border-radius: 12px; padding: 18px 22px; margin: 0 32px 0; text-align: center; animation: alertPulse 1s infinite; }
+.alert-banner.show { display: block; }
+@keyframes alertPulse { 0%,100%{border-color:#ff4444;} 50%{border-color:#ff0000;box-shadow:0 0 20px rgba(255,0,0,0.3);} }
+.spinner { display: none; width: 20px; height: 20px; border: 3px solid #30363d; border-top-color: #79c0ff; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner.show { display: block; }
+code { background: #21262d; padding: 2px 7px; border-radius: 4px; font-family: monospace; color: #a5d6ff; font-size: 0.82rem; }
+.empty-log { text-align: center; color: #6e7681; padding: 32px; font-size: 0.88rem; }
+</style>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #e6edf3; line-height: 1.7; }
+  .hero { background: linear-gradient(135deg,#1a1f2e,#0d2137); padding: 48px 40px; border-bottom: 2px solid #f0b429; }
+  .hero h1 { font-size: 2rem; color: #f0b429; margin-bottom: 8px; }
+  .hero p  { color: #8b949e; font-size: 1.05rem; }
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+  .step { background: #161b22; border: 1px solid #30363d; border-radius: 12px; margin-bottom: 32px; overflow: hidden; }
+  .step-header { display:flex; align-items:center; gap:16px; padding:20px 24px; background:#1c2128; border-bottom:1px solid #30363d; }
+  .step-num { width:40px; height:40px; border-radius:50%; background:#f0b429; color:#000; font-weight:900; font-size:1.1rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .step-title { font-size:1.15rem; font-weight:700; color:#e6edf3; }
+  .step-sub { font-size:0.85rem; color:#8b949e; margin-top:2px; }
+  .step-body { padding:24px; }
+  pre { background:#0d1117; border:1px solid #30363d; border-radius:8px; padding:16px 20px; font-family:'Consolas',monospace; font-size:0.88rem; margin:12px 0; overflow-x:auto; color:#e6edf3; white-space:pre-wrap; }
+  .tip  { background:#0d2137; border-left:4px solid #388bfd; border-radius:6px; padding:14px 18px; margin:14px 0; font-size:0.92rem; color:#79c0ff; }
+  .warn { background:#2d1b00; border-left:4px solid #f0b429; border-radius:6px; padding:14px 18px; margin:14px 0; font-size:0.92rem; color:#e3b341; }
+  .ok   { background:#0d2a1a; border-left:4px solid #3fb950; border-radius:6px; padding:14px 18px; margin:14px 0; font-size:0.92rem; color:#56d364; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; }
+  th { background:#1c2128; color:#f0b429; padding:10px 14px; text-align:left; font-size:0.85rem; }
+  td { padding:10px 14px; border-bottom:1px solid #21262d; font-size:0.88rem; color:#c9d1d9; }
+  td:first-child { font-family:monospace; color:#a5d6ff; }
+  h3 { color:#f0b429; margin:20px 0 8px; font-size:1rem; }
+  p  { color:#c9d1d9; margin-bottom:10px; }
+  ol,ul { padding-left:22px; color:#c9d1d9; }
+  li { margin-bottom:6px; }
+  code { background:#21262d; padding:2px 7px; border-radius:4px; font-family:monospace; color:#a5d6ff; font-size:0.88rem; }
+  .final-box { background:linear-gradient(135deg,#0d2a1a,#0d2137); border:2px solid #3fb950; border-radius:12px; padding:28px; margin-top:32px; text-align:center; }
+  .final-box h2 { color:#56d364; font-size:1.4rem; margin-bottom:12px; }
+  .hl { color:#f0b429; font-weight:bold; }
+  .green { color:#56d364; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div style="max-width:960px;margin:0 auto">
+    <h1>&#9935; SafeMine &mdash; Hardware Integration Guide</h1>
+    <p>Step-by-step: Connect your Dhanalakshimi ESP32 Smart Helmet to the SafeMine Dashboard</p>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- OVERVIEW -->
+<div class="step">
+  <div class="step-header"><div class="step-num">&#128225;</div><div><div class="step-title">How It All Works</div><div class="step-sub">Full data flow from hardware to dashboard</div></div></div>
+  <div class="step-body">
+    <pre>ESP32 Smart Helmet  (Dhanalakshimi hardware)
+  |
+  |  WiFi  ---  HTTP POST JSON  --->
+  |
+  v
+YOUR PC  :  POST http://YOUR_PC_IP:3001/api/telemetry
+  |
+  |  handleHelmetUpdate()  (already coded in server.js)
+  |
+  v
+SQLite DB  +  WebSocket broadcast
+  |
+  v
+SafeMine Dashboard  http://localhost:3001  [LIVE DATA]</pre>
+    <div class="ok">&#10003; The backend is already updated! POST /api/telemetry is live in your server.js &mdash; you only need to configure the ESP32 side.</div>
+  </div>
+</div>
+
+<!-- STEP 1 -->
+<div class="step">
+  <div class="step-header"><div class="step-num">1</div><div><div class="step-title">Find Your PC's IP Address</div><div class="step-sub">The ESP32 sends data to this IP address</div></div></div>
+  <div class="step-body">
+    <p>Your ESP32 and PC must be on the <strong>same WiFi network</strong>. Then find your PC IP:</p>
+    <ol>
+      <li>Press <strong>Windows Key + R</strong>, type <strong>cmd</strong>, press Enter</li>
+      <li>In the black window type:</li>
+    </ol>
+    <pre>ipconfig</pre>
+    <ol start="3">
+      <li>Find <strong>"Wireless LAN adapter Wi-Fi"</strong> section</li>
+      <li>Look for <strong>IPv4 Address</strong> &mdash; it looks like: <span class="hl">192.168.1.105</span></li>
+    </ol>
+    <div class="tip">Example output:<br><br>
+      Wireless LAN adapter Wi-Fi:<br>
+      &nbsp;&nbsp;IPv4 Address . . . : <strong style="color:#f0b429">192.168.1.105</strong><br>
+      &nbsp;&nbsp;Default Gateway  . : 192.168.1.1
+    </div>
+    <div class="warn">&#9888; Write this IP down &mdash; you need it in Step 3. It may be 192.168.0.X or 10.0.0.X on your network.</div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+  <div class="step-header"><div class="step-num">2</div><div><div class="step-title">Clone &amp; Open the Hardware Code</div><div class="step-sub">Get the dhanalakshimi firmware into Arduino IDE</div></div></div>
+  <div class="step-body">
+    <h3>If you haven't cloned the repo yet:</h3>
+    <ol>
+      <li>Open <strong>Command Prompt</strong></li>
+      <li>Run:</li>
+    </ol>
+    <pre>git clone https://github.com/Deepak-Moorthi/dhanalakshimi.git</pre>
+    <ol start="3">
+      <li>Open <strong>Arduino IDE</strong></li>
+      <li>Click <strong>File &rarr; Open</strong></li>
+      <li>Navigate to the cloned folder and open the <strong>.ino</strong> file</li>
+    </ol>
+    <div class="tip">If you already have the folder, just open Arduino IDE and open the .ino file directly.</div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+  <div class="step-header"><div class="step-num">3</div><div><div class="step-title">Change 3 Lines in the Firmware</div><div class="step-sub">Set your WiFi credentials and your PC's IP</div></div></div>
+  <div class="step-body">
+    <p>In the firmware .ino file, find and change these lines:</p>
+
+    <h3>&#128308; BEFORE (what it says now):</h3>
+    <pre>const char *WIFI_SSID       = "your_wifi_name";
+const char *WIFI_PASS       = "your_wifi_password";
+const char *CLOUD_SERVER_URL = "http://your-dashboard-api.com/api/telemetry";</pre>
+
+    <h3>&#128994; AFTER (what to change it to):</h3>
+    <pre>const char *WIFI_SSID       = "<span class="hl">YOUR_ACTUAL_WIFI_NAME</span>";       // your WiFi name
+const char *WIFI_PASS       = "<span class="hl">YOUR_ACTUAL_WIFI_PASSWORD</span>";   // your WiFi password
+const char *CLOUD_SERVER_URL = "http://<span class="hl">192.168.1.105</span>:3001/api/telemetry"; // PC IP from Step 1</pre>
+
+    <div class="warn">&#9888; Replace 192.168.1.105 with YOUR actual IP from Step 1. Keep :3001/api/telemetry exactly as shown.</div>
+
+    <h3>Also set the Helmet ID (one per helmet):</h3>
+    <pre>const char *DEVICE_ID   = "DHANA-001";      // change to DHANA-002 for second helmet
+const char *WORKER_NAME = "Ravi Kumar";     // actual worker name
+const char *ZONE        = "Zone A";         // Zone A / B / C etc.</pre>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step">
+  <div class="step-header"><div class="step-num">4</div><div><div class="step-title">Make Sure Your Firmware Sends HTTP POST</div><div class="step-sub">Check or add the HTTP sending code</div></div></div>
+  <div class="step-body">
+    <p>Your firmware must POST a JSON body to <code>/api/telemetry</code>. Check if your firmware already has <code>HTTPClient</code> code. If not, add this:</p>
+
+    <h3>Add at the top of your .ino file (if not already there):</h3>
+    <pre>#include &lt;WiFi.h&gt;
+#include &lt;HTTPClient.h&gt;
+#include &lt;ArduinoJson.h&gt;</pre>
+
+    <h3>Add this function to your .ino file:</h3>
+    <pre>void sendToSafeMine() {
+  if (WiFi.status() != WL_CONNECTED) return;
+
+  HTTPClient http;
+  http.begin(CLOUD_SERVER_URL);
+  http.addHeader("Content-Type", "application/json");
+
+  StaticJsonDocument&lt;512&gt; doc;
+  doc["device_id"]  = DEVICE_ID;
+  doc["name"]       = WORKER_NAME;
+  doc["zone"]       = ZONE;
+  doc["ch4"]        = readCH4();       // your sensor reading function
+  doc["co"]         = readCO();
+  doc["o2"]         = readO2();
+  doc["temp"]       = readTemp();
+  doc["heart_rate"] = readHR();
+  doc["battery"]    = readBattery();
+  doc["panic"]      = panicPressed ? 1 : 0;
+  doc["fall"]       = fallDetected  ? 1 : 0;
+
+  String body;
+  serializeJson(doc, body);
+
+  int code = http.POST(body);
+  Serial.printf("[SafeMine] Sent! Response: %d\n", code);  // 200 = success
+  http.end();
+}</pre>
+
+    <h3>Call it in your loop():</h3>
+    <pre>void loop() {
+  // ... your existing sensor reading code ...
+
+  sendToSafeMine();   // &lt;&lt; add this line
+  delay(3000);         // send every 3 seconds
+}</pre>
+
+    <div class="tip">The backend accepts many field name variants so even if your firmware uses "mq4", "methane", "bpm" etc. it will still work correctly.</div>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step">
+  <div class="step-header"><div class="step-num">5</div><div><div class="step-title">Upload to ESP32</div><div class="step-sub">Flash the updated code</div></div></div>
+  <div class="step-body">
+    <ol>
+      <li>Connect ESP32 to PC via <strong>USB cable</strong></li>
+      <li><strong>Tools &rarr; Board</strong> &rarr; select <strong>ESP32 Dev Module</strong></li>
+      <li><strong>Tools &rarr; Port</strong> &rarr; select your COM port (e.g. COM5)</li>
+      <li>Click the <strong>Upload &#9658;</strong> button (or Ctrl+U)</li>
+      <li>Wait for <strong>"Done uploading"</strong></li>
+    </ol>
+    <div class="tip">If upload fails &mdash; hold the <strong>BOOT button</strong> on the ESP32 when you click Upload, release when you see "Connecting..."</div>
+
+    <h3>After upload &mdash; open Serial Monitor to check:</h3>
+    <ol>
+      <li><strong>Tools &rarr; Serial Monitor</strong></li>
+      <li>Set baud rate to <strong>115200</strong></li>
+      <li>You should see:</li>
+    </ol>
+    <pre>[WiFi] Connecting......
+[WiFi] Connected! IP: 192.168.1.87
+ [SafeMine] Sent! Response: <span class="green">200</span>   &lt;&lt; 200 means SUCCESS
+  [SafeMine] Sent! Response: 200
+  [SafeMine] Sent! Response: 200</pre>
+    <div class="warn">If you see Response: -1 or 0 &rarr; wrong IP address. Re-check Step 1 and update CLOUD_SERVER_URL.</div>
+  </div>
+</div>
+
+<!-- STEP 6 -->
+<div class="step">
+  <div class="step-header"><div class="step-num">6</div><div><div class="step-title">Start SafeMine on Your PC</div><div class="step-sub">The server must be running to receive data</div></div></div>
+  <div class="step-body">
+    <ol>
+      <li>Go to: <code>C:\Users\HP\OneDrive\Desktop\Production_Envi\</code></li>
+      <li>Double-click <strong>START_MINEGUARD.bat</strong></li>
+      <li>Wait for the console to show the startup banner</li>
+      <li>Open browser: <strong>http://localhost:3001</strong></li>
+    </ol>
+    <div class="ok">You must keep this console window open while the ESP32 is sending data.</div>
+
+    <h3>Verify the endpoint works &mdash; open this in your browser:</h3>
+    <pre>http://localhost:3001/api/health</pre>
+    <p>You should see: <code style="color:#56d364">{"status":"ok","system":"SafeMine"}</code></p>
+  </div>
+</div>
+
+<!-- STEP 7 -->
+<div class="step">
+  <div class="step-header"><div class="step-num">7</div><div><div class="step-title">See Your Helmet on the Dashboard</div><div class="step-sub">Live data from the physical hardware</div></div></div>
+  <div class="step-body">
+    <ol>
+      <li>Open <strong>http://localhost:3001</strong></li>
+      <li>Look for <strong>DHANA-001</strong> in the Workers list</li>
+      <li>You will see live: gas readings, heart rate, battery, zone, risk score</li>
+      <li>The SafeMine backend console will show:</li>
+    </ol>
+    <pre>[HTTP Telemetry] &#10003; DHANA-001 &rarr; CH4:0.12 CO:8.5 O2:20.7 HR:78</pre>
+    <div class="ok">If you see your helmet ID on the dashboard with live sensor values &mdash; integration is 100% complete!</div>
+
+    <h3>Test without ESP32 &mdash; paste this in Command Prompt:</h3>
+    <pre>curl -X POST http://localhost:3001/api/telemetry -H "Content-Type: application/json" -d "{\"device_id\":\"DHANA-001\",\"name\":\"Test Worker\",\"zone\":\"Zone A\",\"ch4\":0.5,\"co\":20,\"o2\":20.5,\"temp\":28,\"heart_rate\":85,\"battery\":75,\"panic\":0,\"fall\":0}"</pre>
+  </div>
+</div>
+
+<!-- TROUBLESHOOTING -->
+<div class="step">
+  <div class="step-header"><div class="step-num">&#128295;</div><div><div class="step-title">Troubleshooting</div><div class="step-sub">If something is not working</div></div></div>
+  <div class="step-body">
+    <table>
+      <tr><th>Problem</th><th>Fix</th></tr>
+      <tr><td>Response: -1 in Serial Monitor</td><td>Wrong IP. Run ipconfig again, update CLOUD_SERVER_URL in firmware</td></tr>
+      <tr><td>WiFi won't connect</td><td>WIFI_SSID or WIFI_PASS is wrong (case sensitive)</td></tr>
+      <tr><td>Helmet not showing on dashboard</td><td>Make sure START_MINEGUARD.bat is running and open http://localhost:3001/api/health</td></tr>
+      <tr><td>Response: 400</td><td>JSON format issue. Check ArduinoJson version is v6.x</td></tr>
+      <tr><td>Response: 500</td><td>Check the SafeMine console window for error message</td></tr>
+      <tr><td>ESP32 can't reach PC at all</td><td>Allow port 3001 in Windows Firewall (see below)</td></tr>
+    </table>
+
+    <h3>Allow Port 3001 in Windows Firewall:</h3>
+    <ol>
+      <li>Press Windows Key, search <strong>Windows Defender Firewall</strong></li>
+      <li>Click <strong>Advanced Settings</strong></li>
+      <li>Click <strong>Inbound Rules &rarr; New Rule</strong></li>
+      <li>Select <strong>Port</strong> &rarr; TCP &rarr; enter <strong>3001</strong></li>
+      <li>Select <strong>Allow the connection</strong> &rarr; Finish</li>
+    </ol>
+  </div>
+</div>
+
+<div class="final-box">
+  <h2>&#127881; Integration Complete!</h2>
+  <p>Your ESP32 helmet data now flows live into the SafeMine dashboard.</p>
+  <br>
+  <p class="green">&#10003; server.js &mdash; POST /api/telemetry endpoint added</p>
+  <p class="green">&#10003; ESP32 firmware &mdash; update WIFI_SSID, WIFI_PASS, CLOUD_SERVER_URL</p>
+  <p class="green">&#10003; Dashboard &mdash; http://localhost:3001</p>
+</div>
+
+</div>
+</body>
+</html>
