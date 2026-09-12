@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign up — SafeMine</title>
+  <link rel="stylesheet" href="frontend/auth-pages.css" />
+</head>
+
+<body class="auth-body">
+  <div class="auth-shell">
+    <div class="auth-brand">
+      <div class="auth-brand-icon">⛏</div>
+      <div class="auth-brand-name">SafeMine</div>
+      <div class="auth-brand-sub">Create an operator account (Supabase)</div>
+    </div>
+
+    <div class="auth-card">
+      <h1>Create account</h1>
+      <p class="auth-lead">You’ll use these credentials to open the dashboard when API auth is enabled.</p>
+
+      <div id="auth-error" class="auth-error" role="alert"></div>
+
+      <form id="signup-form" novalidate>
+        <div class="auth-field">
+          <label for="name">Display name (optional)</label>
+          <input id="name" name="name" type="text" autocomplete="name" />
+        </div>
+        <div class="auth-field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required />
+        </div>
+        <div class="auth-field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="new-password" required minlength="8" />
+        </div>
+        <div class="auth-field">
+          <label for="password2">Confirm password</label>
+          <input id="password2" name="password2" type="password" autocomplete="new-password" required minlength="8" />
+        </div>
+        <button type="submit" class="auth-submit" id="auth-submit">Create account</button>
+      </form>
+
+      <p class="auth-hint" id="auth-hint"></p>
+    </div>
+
+    <p class="auth-footer">
+      Already registered? <a href="login.html">Sign in</a>
+      · <a href="index.html">Back to dashboard</a>
+    </p>
+  </div>
+
+  <script src="frontend/utils/api.js"></script>
+  <script src="frontend/auth/signup-app.js"></script>
+</body>
+
+</html>
