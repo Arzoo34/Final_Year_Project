@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in — SafeMine</title>
+  <link rel="stylesheet" href="frontend/auth-pages.css" />
+</head>
+
+<body class="auth-body">
+  <div class="auth-shell">
+    <div class="auth-brand">
+      <div class="auth-brand-icon">⛏</div>
+      <div class="auth-brand-name">SafeMine</div>
+      <div class="auth-brand-sub">Operator sign in (Supabase)</div>
+    </div>
+
+    <div class="auth-card">
+      <h1>Welcome back</h1>
+      <p class="auth-lead">Use the email and password for your Supabase Auth account.</p>
+
+      <div id="auth-error" class="auth-error" role="alert"></div>
+
+      <form id="login-form" novalidate>
+        <div class="auth-field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required />
+        </div>
+        <div class="auth-field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="auth-submit" id="auth-submit">Sign in</button>
+      </form>
+
+      <p class="auth-hint" id="auth-hint"></p>
+    </div>
+
+    <p class="auth-footer">
+      No account? <a href="signup.html">Create one</a>
+      · <a href="index.html">Back to dashboard</a>
+    </p>
+  </div>
+
+  <script src="frontend/utils/api.js"></script>
+  <script src="frontend/auth/login-app.js"></script>
+</body>
+
+</html>
