@@ -1,0 +1,16 @@
+{
+  "name": "safemine",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SafeMine — AI Powered Smart Helmet for Real Time Worker Safety",
+  "scripts": {
+    "install": "npm install --prefix backend",
+    "start": "npm --prefix backend start",
+    "dev": "npm --prefix backend run dev",
+    "seed": "npm --prefix backend run seed",
+    "reset-db": "npm --prefix backend run reset-db",
+    "patch-gps": "npm --prefix backend run patch-gps",
+    "demo-setup": "npm --prefix backend run demo-setup",
+    "lora": "npm --prefix backend run lora"
+  }
+}
