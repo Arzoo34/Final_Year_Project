@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeMine — AI Powered Smart Helmet for Real Time Worker Safety</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="frontend/styles.css" />
+  <link rel="stylesheet" href="frontend/new-features.css" />
+  <link rel="stylesheet" href="frontend/admin-dashboard.css" />
+  <meta name="theme-color" content="#020508" />
+</head>
+
+<body>
+
+  <!-- Backend offline banner -->
+  <div id="backend-banner"></div>
+
+  <!-- ── TOPBAR ───────────────────────────────────────────── -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle">☰</button>
+      <div class="brand">
+        <div class="brand-icon">⛏</div>
+        <div class="brand-text">
+          <span class="brand-name">SafeMine</span>
+          <div class="brand-subtitle">AI Powered Smart Helmet for Real Time Worker Safety</div>
+        </div>
+      </div>
+      <div class="mine-badge">Mine Not Configured · Level — · OFFLINE</div>
+    </div>
+    <div class="topbar-center">
+      <div id="topbar-marquee" class="status-marquee">
+        <span class="marquee-item safe">● SYSTEM NOMINAL</span>
+        <span class="marquee-sep">·</span>
+        <span class="marquee-item" id="marquee-workers">12 MINERS TRACKED</span>
+        <span class="marquee-sep">·</span>
+        <span class="marquee-item warn" id="marquee-alerts">3 ACTIVE ALERTS</span>
+        <span class="marquee-sep">·</span>
+        <span class="marquee-item">LORA MESH ACTIVE</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div id="ws-dot" title="Backend connection" class="ws-dot"></div>
+      <div id="weather-widget" class="weather-chip">⛏ UNDERGROUND OPS</div>
+      <div id="topbar-time" class="hud-time">00:00:00</div>
+      <button id="theme-btn" onclick="toggleTheme()" class="icon-btn" title="Toggle theme">☀</button>
+    </div>
+  </header>
+
+  <!-- ── SIDEBAR ──────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <nav class="nav">
+      <div class="nav-section-label">MONITORING</div>
+      <a class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span>
+      </a>
+      <a class="nav-item" data-page="map">
+        <span class="nav-icon">🗺</span><span class="nav-label">Mine Map</span>
+      </a>
+      <a class="nav-item" data-page="workers">
+        <span class="nav-icon">👷</span><span class="nav-label">Workers</span>
+        <span class="nav-badge" id="critical-badge">0</span>
+      </a>
+      <a class="nav-item" data-page="alerts">
+        <span class="nav-icon">🚨</span><span class="nav-label">Alerts</span>
+        <span class="nav-badge danger" id="alert-badge">0</span>
+      </a>
+      <div class="nav-section-label">SAFETY</div>
+      <a class="nav-item" data-page="gas">
+        <span class="nav-icon">💨</span><span class="nav-label">Gas Monitoring</span>
+      </a>
+      <a class="nav-item" data-page="health">
+        <span class="nav-icon">❤️</span><span class="nav-label">Health & Vitals</span>
+      </a>
+      <a class="nav-item" data-page="evacuation">
+        <span class="nav-icon">🏃</span><span class="nav-label">Evacuation</span>
+      </a>
+      <div class="nav-section-label">NETWORK</div>
+      <a class="nav-item" data-page="network">
+        <span class="nav-icon">📡</span><span class="nav-label">LoRa Network</span>
+      </a>
+      <a class="nav-item" data-page="incidents">
+        <span class="nav-icon">📋</span><span class="nav-label">Incidents</span>
+      </a>
+      <a class="nav-item" data-page="aiassist">
+        <span class="nav-icon">🤖</span><span class="nav-label">AI Assistant</span>
+      </a>
+      <div class="nav-section-label">ADVANCED</div>
+      <a class="nav-item" data-page="analytics">
+        <span class="nav-icon">🧠</span><span class="nav-label">Predictive AI</span>
+      </a>
+      <a class="nav-item" data-page="simulation">
+        <span class="nav-icon">⚡</span><span class="nav-label">Emergency Simulator</span>
+      </a>
+      <a class="nav-item" data-page="drones">
+        <span class="nav-icon">🚁</span><span class="nav-label">Drones</span>
+      </a>
+      <a class="nav-item" data-page="muster">
+        <span class="nav-icon">📋</span><span class="nav-label">Muster Report</span>
+      </a>
+      <a class="nav-item" data-page="geofence">
+        <span class="nav-icon">🚧</span><span class="nav-label">Geofences</span>
+      </a>
+      <a class="nav-item" data-page="admin">
+        <span class="nav-icon">⚙️</span><span class="nav-label">Admin Settings</span>
+      </a>
+      <a class="nav-item" data-page="maintenance">
+        <span class="nav-icon">🛠</span><span class="nav-label">Maintenance</span>
+      </a>
+      <div class="nav-section-label">COMMAND</div>
+      <a class="nav-item" data-page="admindash">
+        <span class="nav-icon">🛡</span><span class="nav-label">Admin Dashboard</span>
+        <span class="nav-badge danger" id="adm-emergency-badge" style="display:none">!</span>
+      </a>
+      <a class="nav-item" data-page="optimization">
+        <span class="nav-icon">🧠</span><span class="nav-label">Optimization</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="shift-info">
+        <div class="shift-label">CURRENT SHIFT</div>
+        <div class="shift-val" id="shift-name">Day Shift A</div>
+        <div class="shift-time" id="shift-time">06:00 – 18:00</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ─────────────────────────────────────── -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title" id="page-title">Dashboard</h1>
+      <div class="page-actions">
+        <button class="btn-secondary" onclick="refreshData()">↺ Refresh</button>
+        <button class="btn-danger" onclick="openEvacuationModal()">🚨 EVACUATE</button>
+      </div>
+    </div>
+
+    <!-- ═══════════ DASHBOARD ═══════════ -->
+    <section class="page active" id="page-dashboard">
+
+      <!-- Emergency Banner -->
+      <div id="emergency-banner" style="display:none"></div>
+
+      <!-- KPI Row -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap">👷</div>
+          <div class="kpi-body">
+            <div class="kpi-value accent" id="kpi-total">12</div>
+            <div class="kpi-label">Miners Underground</div>
+            <div class="kpi-trend safe" id="kpi-all-safe">ALL TRACKED</div>
+          </div>
+        </div>
+        <div class="kpi-card danger">
+          <div class="kpi-icon-wrap">🚨</div>
+          <div class="kpi-body">
+            <div class="kpi-value danger" id="kpi-emergency">0</div>
+            <div class="kpi-label">Emergencies</div>
+            <div class="kpi-trend" id="kpi-panic-count">0 panic</div>
+          </div>
+        </div>
+        <div class="kpi-card warn">
+          <div class="kpi-icon-wrap">⚠️</div>
+          <div class="kpi-body">
+            <div class="kpi-value warn" id="kpi-critical">2</div>
+            <div class="kpi-label">Critical Workers</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap">🔥</div>
+          <div class="kpi-body">
+            <div class="kpi-value" id="kpi-ch4">—<span style="font-size:14px" id="kpi-gas-unit"> ADC</span></div>
+            <div class="kpi-label">Peak Flammable Gas</div>
+            <div class="kpi-trend danger" id="kpi-ch4-zone">Zone C</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap">🛡</div>
+          <div class="kpi-body">
+            <div class="kpi-value" id="kpi-risk">4.2</div>
+            <div class="kpi-label">Avg Risk Index</div>
+            <div class="kpi-trend" id="kpi-risk-label">/10</div>
+          </div>
+        </div>
+        <div class="kpi-card safe">
+          <div class="kpi-icon-wrap">📡</div>
+          <div class="kpi-body">
+            <div class="kpi-value safe" id="kpi-lora">LIVE</div>
+            <div class="kpi-label">LoRa Network</div>
+          </div>
+          <div class="kpi-trend safe" id="kpi-anchors">10 anchors</div>
+        </div>
+      </div>
+
+      <!-- Agentic alerts banner -->
+      <div id="agentic-banner" class="agentic-banner"></div>
+
+      <!-- Main grid -->
+      <div class="dash-grid">
+        <!-- Worker status table -->
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>⛏ Live Worker Status</h3>
+            <div class="card-actions">
+              <button class="btn-chip" onclick="exportWorkersCSV()">↓ CSV</button>
+              <button class="btn-chip active" onclick="navigateTo('workers')">View All →</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Zone/Tunnel</th>
+                  <th>🔥 Flammable Gas</th>
+                  <th>O₂</th>
+                  <th>Pressure</th>
+                  <th>HR</th>
+                  <th>Risk</th>
+                  <th>Status</th>
+                  <th>Battery</th>
+                </tr>
+              </thead>
+              <tbody id="worker-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Alert feed -->
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>🚨 Live Alerts</h3>
+            <button class="btn-chip" onclick="navigateTo('alerts')">All →</button>
+          </div>
+          <div id="alert-feed" class="alert-feed"></div>
+        </div>
+
+        <!-- Zone summary -->
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>🗺 Zone Summary</h3>
+          </div>
+          <div id="zone-summary" class="zone-summary"></div>
+        </div>
+
+        <!-- Trend chart -->
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>📈 Gas Trend (Last 24h)</h3>
+            <div class="card-actions">
+              <button class="btn-chip active" onclick="setGasTrendRange(24,this)">24h</button>
+              <button class="btn-chip" onclick="setGasTrendRange(48,this)">48h</button>
+              <button class="btn-chip" onclick="setGasTrendRange(168,this)">7d</button>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="gasTrendChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ MINE MAP ═══════════ -->
+    <section class="page" id="page-map">
+      <div class="map-toolbar">
+        <div class="map-tools">
+          <button class="btn-tool active" onclick="setMapMode('workers',this)">👷 Workers</button>
+          <button class="btn-tool" onclick="setMapMode('gas',this)">💨 Gas Overlay</button>
+          <button class="btn-tool" onclick="setMapMode('anchors',this)">📡 Anchors</button>
+          <button class="btn-tool" onclick="setMapMode('surface',this)">🌍 Surface Map</button>
+        </div>
+        <div class="map-tools">
+          <select id="tunnel-filter" onchange="filterByTunnel(this.value)" class="select-chip">
+            <option value="all">All Tunnels</option>
+            <option>T1</option>
+            <option>T2</option>
+            <option>T3</option>
+            <option>T4</option>
+            <option>T5</option>
+            <option>T6</option>
+          </select>
+          <select id="status-filter" onchange="filterByStatus(this.value)" class="select-chip">
+            <option value="all">All Status</option>
+            <option value="emergency">Emergency</option>
+            <option value="critical">Critical</option>
+            <option value="warning">Warning</option>
+            <option value="online">Online</option>
+          </select>
+        </div>
+      </div>
+      <!-- Underground canvas map -->
+      <div class="map-container" id="underground-map-wrap" style="height:calc(100vh - 220px)">
+        <canvas id="mine-canvas"></canvas>
+      </div>
+      <!-- Surface Leaflet map -->
+      <div id="surface-map-wrap" style="height:calc(100vh - 220px);display:none">
+        <div id="leaflet-map" style="width:100%;height:100%"></div>
+      </div>
+      <div class="map-legend">
+        <div class="legend-item"><span class="dot" style="background:#ef4444"></span>Emergency</div>
+        <div class="legend-item"><span class="dot" style="background:#ff6b35"></span>Critical</div>
+        <div class="legend-item"><span class="dot" style="background:#ffcc00"></span>Warning</div>
+        <div class="legend-item"><span class="dot" style="background:#00ff9d"></span>Online</div>
+        <div class="legend-item"><span class="dot" style="background:#00d4ff;border-radius:2px"></span>Anchor</div>
+      </div>
+    </section>
+
+    <!-- ═══════════ WORKERS ═══════════ -->
+    <section class="page" id="page-workers">
+      <div class="toolbar">
+        <input type="text" id="worker-search" class="search-input" placeholder="Search by name, ID, zone…"
+          oninput="filterWorkers(this.value)" />
+        <button class="btn-primary" onclick="openAddWorkerModal()">+ Register Miner</button>
+      </div>
+      <div id="worker-grid" class="worker-grid"></div>
+    </section>
+
+    <!-- ═══════════ ALERTS ═══════════ -->
+    <section class="page" id="page-alerts">
+      <div class="toolbar">
+        <div class="filter-row">
+          <button class="btn-chip active" onclick="filterAlerts('all',this)">All</button>
+          <button class="btn-chip" onclick="filterAlerts('emergency',this)">🚨 Emergency</button>
+          <button class="btn-chip" onclick="filterAlerts('critical',this)">🔴 Critical</button>
+          <button class="btn-chip" onclick="filterAlerts('warning',this)">🟡 Warning</button>
+        </div>
+        <button class="btn-secondary" onclick="clearAlerts()">Clear Read</button>
+      </div>
+      <div id="alerts-list" class="alerts-list"></div>
+    </section>
+
+    <!-- ═══════════ GAS MONITORING ═══════════ -->
+    <section class="page" id="page-gas">
+      <div class="gas-grid">
+        <!-- Flammable Gas card — raw MQ2 ADC from ESP32 (replaces computed CH4/CO) -->
+        <div class="gas-card" id="gas-flammable">
+          <div class="gas-icon">🔥</div>
+          <div class="gas-name">Flammable Gas (MQ2 Raw)</div>
+          <div class="gas-reading" id="gas-flammable-val">--</div>
+          <div class="gas-unit">ADC (0-4095)</div>
+          <div class="gas-bar-wrap">
+            <div class="gas-bar" id="gas-flammable-bar"></div>
+          </div>
+          <div class="gas-limits">Warning: 1200 · Critical: 2000 · Explosive: >3000</div>
+          <div id="gas-flammable-source" style="font-size:10px;color:var(--text-muted);margin-top:4px">Source: ESP32 gas_raw</div>
+        </div>
+        <div class="gas-card" id="gas-o2">
+          <div class="gas-icon">🔵</div>
+          <div class="gas-name">Oxygen (O₂)</div>
+          <div class="gas-reading" id="gas-o2-val">--</div>
+          <div class="gas-unit">%</div>
+          <div class="gas-bar-wrap">
+            <div class="gas-bar o2" id="gas-o2-bar"></div>
+          </div>
+          <div class="gas-limits">Normal: 20.9% · Low: &lt;19.5% · Danger: &lt;18%</div>
+        </div>
+        <div class="gas-card" id="gas-temp">
+          <div class="gas-icon">🌡</div>
+          <div class="gas-name">Ambient Temperature</div>
+          <div class="gas-reading" id="gas-temp-val">--</div>
+          <div class="gas-unit">°C</div>
+          <div class="gas-bar-wrap">
+            <div class="gas-bar temp" id="gas-temp-bar"></div>
+          </div>
+          <div class="gas-limits">Warning: 35°C · Critical: 40°C</div>
+        </div>
+        <!-- Pressure card — BMP180 sensor from ESP32 -->
+        <div class="gas-card" id="gas-pressure">
+          <div class="gas-icon">🌀</div>
+          <div class="gas-name">Barometric Pressure (BMP180)</div>
+          <div class="gas-reading" id="gas-pressure-val">--</div>
+          <div class="gas-unit">hPa</div>
+          <div class="gas-bar-wrap">
+            <div class="gas-bar" id="gas-pressure-bar" style="background:var(--accent)"></div>
+          </div>
+          <div class="gas-limits">Normal: ~1013 hPa · Low: &lt;900 hPa (cave-in risk)</div>
+          <div id="gas-pressure-drop" style="font-size:10px;color:var(--text-muted);margin-top:4px">Sudden drop &gt;20 hPa → structural alert</div>
+        </div>
+      </div>
+      <div class="dash-grid" style="margin-top:20px">
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>📊 Flammable Gas (Raw ADC) by Zone</h3>
+          </div>
+          <div class="chart-wrap"><canvas id="gasZoneChart"></canvas></div>
+        </div>
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>🔥 Per-Miner Flammable Gas (Raw ADC)</h3>
+          </div>
+          <div class="chart-wrap"><canvas id="ch4MinerChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ HEALTH & VITALS ═══════════ -->
+    <section class="page" id="page-health">
+      <div class="dash-grid">
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>❤️ Heart Rate by Miner</h3>
+          </div>
+          <div class="chart-wrap"><canvas id="hrChart"></canvas></div>
+        </div>
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>📋 Health Status Overview</h3>
+          </div>
+          <div id="health-list" class="health-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ EVACUATION ═══════════ -->
+    <section class="page" id="page-evacuation">
+      <div class="evac-hero">
+        <div class="evac-icon">🚨</div>
+        <h2>Emergency Evacuation Control</h2>
+        <p>Issue evacuation orders for specific zones or the entire mine. All affected miners will receive haptic + LED
+          alerts on their smart helmets.</p>
+      </div>
+      <div class="evac-zones" id="evac-zones"></div>
+      <div class="dash-card" style="margin-top:20px">
+        <div class="card-header">
+          <h3>📋 Evacuation Log</h3>
+        </div>
+        <div id="evac-log" class="alerts-list"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════ NETWORK ═══════════ -->
+    <section class="page" id="page-network">
+      <div class="lora-stats-row" id="lora-stats-row"></div>
+      <div class="dash-grid">
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>📡 Anchor Node Status</h3>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Anchor ID</th>
+                  <th>Tunnel</th>
+                  <th>Position (x,y)</th>
+                  <th>Depth</th>
+                  <th>RSSI</th>
+                  <th>Status</th>
+                  <th>Last Seen</th>
+                </tr>
+              </thead>
+              <tbody id="anchor-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>📊 Signal Strength</h3>
+          </div>
+          <div class="chart-wrap" style="height:320px;min-height:280px"><canvas id="rssiChart" style="height:100%"></canvas></div>
+        </div>
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>📡 Packet Log</h3>
+          </div>
+          <div id="packet-log" class="packet-log"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ INCIDENTS ═══════════ -->
+    <section class="page" id="page-incidents">
+      <div class="toolbar">
+        <button class="btn-primary" onclick="openIncidentModal()">+ Report Incident</button>
+      </div>
+      <div id="incident-list" class="alerts-list"></div>
+    </section>
+
+    <!-- ═══════════ AI ASSISTANT ═══════════ -->
+    <section class="page" id="page-aiassist">
+      <div class="ai-container">
+        <div class="ai-header">
+          <div class="ai-avatar">🤖</div>
+          <div>
+            <h2>SafeMine AI Safety Assistant</h2>
+            <p>Powered by Claude (Anthropic) · Real-time mine telemetry · Emergency response guidance</p>
+          </div>
+          <button class="btn-secondary" onclick="clearAIChat()">Clear Chat</button>
+        </div>
+        <div class="ai-quick-btns">
+          <button class="btn-chip" onclick="sendAIChat('What is the current safety status of the mine?')">Safety Status</button>
+          <button class="btn-chip" onclick="sendAIChat('Which miners are at highest risk right now?')">Risk Analysis</button>
+          <button class="btn-chip" onclick="sendAIChat('What should I do about elevated methane levels?')">CH₄ Advice</button>
+          <button class="btn-chip" onclick="sendAIChat('Recommend evacuation procedures for the highest risk zone.')">Evac Procedure</button>
+          <button class="btn-chip" onclick="sendAIChat('Explain sensor fusion alerts and what they mean.')">Sensor Fusion</button>
+          <button class="btn-chip" onclick="sendAIChat('Summarize all active escalations and what actions to take.')">Escalation Status</button>
+        </div>
+        <div id="ai-chat-log" class="ai-chat-log">
+          <div class="ai-msg assistant">
+            <div class="ai-msg-label">🤖 SafeMine AI</div>
+            <div class="ai-msg-text">Hello! I'm your underground safety assistant.<br>I have live access to all miner
+              positions, gas readings, heart rates, and alerts.<br>Ask me anything about safety conditions, emergency
+              procedures, or risk assessment.</div>
+          </div>
+        </div>
+        <div class="ai-input-row">
+          <textarea id="ai-chat-input" class="ai-input" placeholder="Ask about safety, gas levels, evacuation procedures…"
+            rows="2" onkeydown="handleAIChatKey(event)"></textarea>
+          <button id="ai-send-btn" class="btn-primary" onclick="sendAIChat(document.getElementById('ai-chat-input')?.value?.trim())">Send</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ PREDICTIVE AI ═══════════ -->
+    <section class="page" id="page-analytics">
+      <div class="dash-grid">
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>🧠 AI Risk Forecast</h3>
+            <button class="btn-chip active" onclick="loadRiskForecast()">Refresh Forecast</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Miner</th>
+                  <th>Zone</th>
+                  <th>Current Risk</th>
+                  <th>CH₄ Trend</th>
+                  <th>Fatigue Score</th>
+                  <th>AI Prediction</th>
+                </tr>
+              </thead>
+              <tbody id="forecast-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>📈 Fatigue Index by Miner</h3>
+          </div>
+          <div class="chart-wrap"><canvas id="fatigueChart"></canvas></div>
+        </div>
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>⚠️ High Risk Workers</h3>
+          </div>
+          <div id="high-risk-list" class="alert-feed"></div>
+        </div>
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>📊 Zone Risk Matrix</h3>
+          </div>
+          <div class="chart-wrap"><canvas id="zoneRiskChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ EMERGENCY SCENARIO SIMULATOR ═══════════ -->
+    <section class="page" id="page-simulation">
+      <div class="evac-hero" style="background:linear-gradient(135deg,rgba(255,45,85,0.15),rgba(0,10,25,0.9))">
+        <div class="evac-icon">⚡</div>
+        <h2 style="color:var(--danger)">Emergency Scenario Simulator</h2>
+        <p>Inject real-time emergency events into the live system. All scenarios fire actual MQTT alerts and update the
+          dashboard immediately.</p>
+      </div>
+      <div class="evac-zones" style="margin-top:20px" id="scenario-grid">
+        <div class="evac-zone-card" style="border-color:rgba(255,107,53,0.4)">
+          <div class="evac-zone-name" style="color:#ff6b35">💨 Gas Spike</div>
+          <div class="evac-zone-workers">Methane CH₄ → 1.35% (explosive)<br>CO → 62ppm (toxic)</div>
+          <button class="evac-zone-btn" style="background:#ff6b35" onclick="runLiveScenario('gas_spike')">▶ Trigger Gas
+            Spike</button>
+        </div>
+        <div class="evac-zone-card" style="border-color:rgba(255,45,85,0.4)">
+          <div class="evac-zone-name" style="color:#ff2d55">🆘 Panic Button</div>
+          <div class="evac-zone-workers">Simulate a worker pressing<br>the SOS distress button</div>
+          <button class="evac-zone-btn" onclick="runLiveScenario('panic')">▶ Trigger Panic</button>
+        </div>
+        <div class="evac-zone-card" style="border-color:rgba(255,45,85,0.4)">
+          <div class="evac-zone-name" style="color:#ff2d55">🫸 Fall Detected</div>
+          <div class="evac-zone-workers">Simulate accelerometer impact<br>and no-motion event</div>
+          <button class="evac-zone-btn" onclick="runLiveScenario('fall')">▶ Trigger Fall</button>
+        </div>
+        <div class="evac-zone-card" style="border-color:rgba(255,204,0,0.3)">
+          <div class="evac-zone-name" style="color:#ffcc00">🫁 Low Oxygen</div>
+          <div class="evac-zone-workers">O₂ drops to 17.8%<br>Breathing hazard threshold</div>
+          <button class="evac-zone-btn" style="background:#ffcc00;color:#000" onclick="runLiveScenario('low_o2')">▶
+            Trigger Low O₂</button>
+        </div>
+        <div class="evac-zone-card" style="border-color:rgba(255,45,85,0.4)">
+          <div class="evac-zone-name" style="color:#ff2d55">🔥 Fire</div>
+          <div class="evac-zone-workers">Thermal spike + CO surge<br>48°C · CO 85ppm</div>
+          <button class="evac-zone-btn" onclick="runLiveScenario('fire')">▶ Trigger Fire</button>
+        </div>
+        <div class="evac-zone-card" style="border-color:rgba(0,212,255,0.2)">
+          <div class="evac-zone-name" style="color:var(--accent)">📢 Broadcast Alert</div>
+          <div class="evac-zone-workers">Send a custom message<br>to all workers in a zone</div>
+          <button class="evac-zone-btn" style="background:var(--accent);color:#000" onclick="openBroadcastModal()">▶
+            Send Broadcast</button>
+        </div>
+      </div>
+      <div id="sim-result-card" class="dash-card" style="margin-top:20px;display:none">
+        <div class="card-header">
+          <h3>⚡ Last Scenario Result</h3>
+        </div>
+        <div id="sim-results" class="alert-feed"></div>
+      </div>
+      <div class="dash-card" style="margin-top:16px">
+        <div class="card-header">
+          <h3>📍 Nearest Refuge Chambers</h3>
+        </div>
+        <div id="refuge-list" class="zone-summary"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════ DRONES ═══════════ -->
+    <section class="page" id="page-drones">
+      <div class="lora-stats-row" id="drone-stats-row"></div>
+      <div class="dash-grid" style="margin-top:16px">
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>🚁 Drone Fleet Status</h3>
+          </div>
+          <div id="drone-grid" class="worker-grid"></div>
+        </div>
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>📹 Live Inspection Feed</h3>
+            <span style="font-size:11px;color:var(--text-muted)">Live feed requires integration</span>
+          </div>
+          <div id="drone-feed"
+            style="background:#030a0f;border:1px solid var(--border);border-radius:8px;height:280px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px">
+            <div style="font-size:48px">🚁</div>
+            <div style="color:var(--accent);font-family:var(--font-mono)">DRONE ALPHA — ZONE C INSPECTION</div>
+            <div style="color:var(--text-muted);font-size:11px">Thermal: Normal · Gas: CH₄ 1.2% detected · Structural:
+              No anomalies</div>
+            <div id="drone-scan-bar"
+              style="width:60%;height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+              <div style="height:100%;background:var(--accent);animation:scanBar 2s infinite"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ MUSTER REPORT ═══════════ -->
+    <section class="page" id="page-muster">
+      <div class="kpi-row" id="muster-kpi-row"></div>
+      <div class="dash-grid" style="margin-top:16px">
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>📋 Headcount by Zone</h3>
+            <div class="card-actions">
+              <button class="btn-chip active" onclick="loadMusterReport()">Refresh</button>
+              <button class="btn-chip" onclick="exportMusterPDF()">Export PDF</button>
+            </div>
+          </div>
+          <div id="muster-zones" class="zone-summary"></div>
+        </div>
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>❌ Missing / Offline Workers</h3>
+          </div>
+          <div id="muster-missing" class="alert-feed"></div>
+        </div>
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>📡 Emergency Workers</h3>
+          </div>
+          <div id="muster-emergency" class="alert-feed"></div>
+        </div>
+      </div>
+      <div class="dash-card" style="margin-top:16px">
+        <div class="card-header">
+          <h3>🕒 Muster Report generated: <span id="muster-time" style="color:var(--accent)">—</span></h3>
+        </div>
+        <div id="muster-detail" class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Zone</th>
+                <th>Status</th>
+                <th>Last Seen</th>
+              </tr>
+            </thead>
+            <tbody id="muster-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ GEOFENCES ═══════════ -->
+    <section class="page" id="page-geofence">
+      <div class="toolbar">
+        <button class="btn-primary" onclick="openAddGeofenceModal()">+ Add Geofence</button>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>🚧 Active Geofences</h3>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Zone</th>
+                  <th>Type</th>
+                  <th>Radius</th>
+                  <th>Status</th>
+                  <th>Workers Inside</th>
+                </tr>
+              </thead>
+              <tbody id="geofence-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>📍 Geofence Map View</h3>
+          </div>
+          <div
+            style="background:var(--bg-card);border:1px dashed var(--border);border-radius:8px;padding:16px;min-height:200px">
+            <canvas id="geofence-canvas" style="width:100%;height:260px"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ ADMIN SETTINGS ═══════════ -->
+    <section class="page" id="page-admin">
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>⚙️ System Configuration</h3>
+          </div>
+          <div class="modal-body" style="padding:0">
+            <div class="form-group"><label>Mine Name</label><input id="cfg-mine-name" placeholder="Your Mine Name" />
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Mine Latitude</label><input id="cfg-mine-lat" type="number" step="0.000001"
+                  placeholder="e.g. 17.3850" /></div>
+              <div class="form-group"><label>Mine Longitude</label><input id="cfg-mine-lng" type="number"
+                  step="0.000001" placeholder="e.g. 78.4867" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Shift A Hours</label><input id="cfg-shift-a" placeholder="06:00-18:00" />
+              </div>
+              <div class="form-group"><label>Shift B Hours</label><input id="cfg-shift-b" placeholder="18:00-06:00" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Max Workers Underground</label><input id="cfg-max-workers" type="number"
+                  placeholder="50" /></div>
+              <div class="form-group"><label>LoRa Interval (sec)</label><input id="cfg-lora-interval" type="number"
+                  placeholder="30" /></div>
+            </div>
+            <div class="form-group" style="display:flex;gap:12px;align-items:center">
+              <label style="margin:0">Auto Evacuation on Critical</label>
+              <input type="checkbox" id="cfg-auto-evac" style="width:18px;height:18px;accent-color:var(--danger)">
+            </div>
+          </div>
+          <div class="modal-footer" style="padding:16px 0 0">
+            <button class="btn-primary" onclick="saveAdminSettings()">Save Settings</button>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>🚨 Alert Thresholds</h3>
+          </div>
+          <div class="modal-body" style="padding:0">
+            <div class="form-row">
+              <div class="form-group"><label>CH₄ Warning (%)</label><input id="thr-ch4-warn" type="number" step="0.1"
+                  placeholder="0.5" /></div>
+              <div class="form-group"><label>CH₄ Critical (%)</label><input id="thr-ch4-crit" type="number" step="0.1"
+                  placeholder="1.0" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>CO Warning (ppm)</label><input id="thr-co-warn" type="number"
+                  placeholder="25" /></div>
+              <div class="form-group"><label>CO Critical (ppm)</label><input id="thr-co-crit" type="number"
+                  placeholder="50" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>O₂ Low (%)</label><input id="thr-o2-low" type="number" step="0.1"
+                  placeholder="19.5" /></div>
+              <div class="form-group"><label>Temp High (°C)</label><input id="thr-temp-high" type="number"
+                  placeholder="35" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>HR High (bpm)</label><input id="thr-hr-high" type="number"
+                  placeholder="130" /></div>
+              <div class="form-group"><label>Battery Low (%)</label><input id="thr-battery-low" type="number"
+                  placeholder="15" /></div>
+            </div>
+          </div>
+          <div class="modal-footer" style="padding:16px 0 0">
+            <button class="btn-primary" onclick="saveAdminSettings()">Save Thresholds</button>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>🖥 System Status</h3>
+          </div>
+          <div id="admin-sys-status" class="zone-summary"></div>
+        </div>
+        <div class="dash-card">
+          <div class="card-header">
+            <h3>💾 Database Actions</h3>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;padding-top:8px">
+            <button class="btn-secondary" onclick="exportWorkersCSV()">Export Workers CSV</button>
+            <button class="btn-secondary" onclick="exportAllAlerts()">Export Alerts CSV</button>
+            <button class="btn-chip" onclick="clearOldAlerts()" style="color:var(--warning)">Clear Alerts Older than
+              24h</button>
+            <button class="btn-danger" style="margin-top:8px" onclick="confirmClearDB()">Reset Demo Data</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ MAINTENANCE ═══════════ -->
+    <section class="page" id="page-maintenance">
+      <div class="dash-grid">
+        <div class="dash-card wide">
+          <div class="card-header">
+            <h3>🛠 Sensor Health & Maintenance</h3>
+            <div class="card-actions">
+              <button class="btn-chip active" onclick="loadSensorFaultsPage()">↺ Refresh</button>
+            </div>
+          </div>
+          <div class="alerts-list" id="sensor-faults-list" style="min-height:140px"></div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- end main -->
+
+  <!-- Add Geofence Modal -->
+  <div class="modal-overlay" id="modal-add-geofence">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Geofence Zone</h3><button onclick="closeModal('modal-add-geofence')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label>Name</label><input id="gf-name" placeholder="Zone C Methane Area" /></div>
+          <div class="form-group"><label>Zone</label>
+            <select id="gf-zone">
+              <option>Zone A</option>
+              <option>Zone B</option>
+              <option>Zone C</option>
+              <option>Zone D</option>
+              <option>Zone E</option>
+              <option>Zone F</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Type</label>
+            <select id="gf-type">
+              <option value="hazard">⛔ Hazard Zone (Red)</option>
+              <option value="machinery">⚙ Machinery Zone (Orange)</option>
+              <option value="restricted">⚠ Restricted Area (Yellow)</option>
+              <option value="safe">✓ Safe Zone / Muster (Green)</option>
+              <option value="refuge">&#x1F3E0; Refuge Chamber</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Radius (map units)</label><input id="gf-radius" type="number"
+              placeholder="60" /></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modal-add-geofence')">Cancel</button>
+        <button class="btn-primary" onclick="addGeofence()">Add Geofence</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ MODALS ═══════════ -->
+
+  <!-- Add Worker -->
+  <div class="modal-overlay" id="modal-add-worker">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Register New Miner</h3><button onclick="closeModal('modal-add-worker')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label>Worker ID</label><input id="new-worker-id" placeholder="MNR-013" /></div>
+          <div class="form-group"><label>Full Name</label><input id="new-worker-name" placeholder="John Doe" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Zone</label>
+            <select id="new-worker-zone">
+              <option>Zone A</option>
+              <option>Zone B</option>
+              <option>Zone C</option>
+              <option>Zone D</option>
+              <option>Zone E</option>
+              <option>Zone F</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Tunnel</label>
+            <select id="new-worker-tunnel">
+              <option>T1</option>
+              <option>T2</option>
+              <option>T3</option>
+              <option>T4</option>
+              <option>T5</option>
+              <option>T6</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Protocol</label>
+            <select id="new-worker-protocol">
+              <option>LoRaWAN</option>
+              <option>UWB</option>
+              <option>BLE</option>
+              <option>RFID</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Shift</label>
+            <select id="new-worker-shift">
+              <option value="A">Shift A</option>
+              <option value="B">Shift B</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modal-add-worker')">Cancel</button>
+        <button class="btn-primary" onclick="addWorker()">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evacuate -->
+  <div class="modal-overlay" id="modal-evacuate">
+    <div class="modal modal-danger">
+      <div class="modal-header danger">
+        <h3>🚨 ORDER EVACUATION</h3><button onclick="closeModal('modal-evacuate')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Zone to Evacuate</label>
+          <select id="evac-zone">
+            <option value="ALL">⚠ ENTIRE MINE</option>
+            <option>Zone A</option>
+            <option>Zone B</option>
+            <option>Zone C</option>
+            <option>Zone D</option>
+            <option>Zone E</option>
+            <option>Zone F</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Reason</label>
+          <input id="evac-reason" placeholder="Gas leak / Seismic event / Flooding…" />
+        </div>
+        <div class="evac-warning">
+          ⚠ This will send emergency haptic + LED alerts to all helmets in the selected zone.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modal-evacuate')">Cancel</button>
+        <button class="btn-danger" onclick="executeEvacuation()">🚨 CONFIRM EVACUATION</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Incident -->
+  <div class="modal-overlay" id="modal-incident">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Report Incident</h3><button onclick="closeModal('modal-incident')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label>Type</label>
+            <select id="inc-type">
+              <option>Gas Leak</option>
+              <option>Equipment Fault</option>
+              <option>Minor Injury</option>
+              <option>Seismic Event</option>
+              <option>Flooding</option>
+              <option>Fire</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Zone</label>
+            <select id="inc-zone">
+              <option>Zone A</option>
+              <option>Zone B</option>
+              <option>Zone C</option>
+              <option>Zone D</option>
+              <option>Zone E</option>
+              <option>Zone F</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Severity</label>
+            <select id="inc-severity">
+              <option>low</option>
+              <option>medium</option>
+              <option>high</option>
+              <option>critical</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Description</label>
+          <textarea id="inc-desc" rows="3" placeholder="Describe the incident…"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modal-incident')">Cancel</button>
+        <button class="btn-primary" onclick="submitIncident()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" style="display:none"></div>
+
+  <!-- Broadcast Alert Modal -->
+  <div class="modal-overlay" id="modal-broadcast">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📢 Broadcast Alert to Zone</h3><button onclick="closeModal('modal-broadcast')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label>Target Zone</label>
+            <select id="bc-zone">
+              <option value="ALL">⚠ ENTIRE MINE</option>
+              <option>Zone A</option>
+              <option>Zone B</option>
+              <option>Zone C</option>
+              <option>Zone D</option>
+              <option>Zone E</option>
+              <option>Zone F</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Alert Level</label>
+            <select id="bc-level">
+              <option value="warning">⚠ Warning</option>
+              <option value="critical">🔴 Critical</option>
+              <option value="emergency">🆘 Emergency</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Message</label>
+          <textarea id="bc-message" rows="3"
+            placeholder="e.g. Methane levels elevated in Tunnel 3. Please evacuate to surface via Route C."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modal-broadcast')">Cancel</button>
+        <button class="btn-primary" onclick="sendBroadcast()">📢 Send Broadcast</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Worker Detail + SOS Modal -->
+  <div class="modal-overlay" id="modal-worker-detail">
+    <div class="modal" style="max-width:520px">
+      <div class="modal-header">
+        <h3 id="wd-title">Worker Detail</h3><button onclick="closeModal('modal-worker-detail')">✕</button>
+      </div>
+      <div class="modal-body" id="wd-body"></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modal-worker-detail')">Close</button>
+        <button class="btn-primary" onclick="pingNode()">📶 PING NODE</button>
+        <button class="btn-danger" id="wd-sos-btn" onclick="triggerWorkerSOS()">🆘 SEND SOS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADMIN DASHBOARD PAGE ────────────────────────────────── -->
+  <div id="page-admindash" class="page">
+    <div class="admindash-grid">
+
+      <!-- LEFT: Contact + Safety Score + Zone Map -->
+      <div class="adm-left">
+
+        <!-- Safety Score Ring -->
+        <div class="adm-card">
+          <div class="adm-card-head">⚡ Mine Safety Score <span id="adm-last-updated" style="font-size:0.58rem;color:var(--text-sec)"></span></div>
+          <div class="adm-card-body">
+            <div class="safety-ring-wrap">
+              <svg class="safety-ring-svg" viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(0,212,255,0.08)" stroke-width="10"/>
+                <circle id="adm-ring-arc" cx="55" cy="55" r="46" fill="none"
+                  stroke="#00ff9d" stroke-width="10" stroke-linecap="round"
+                  stroke-dasharray="289 289" stroke-dashoffset="289"
+                  transform="rotate(-90 55 55)" style="transition:stroke-dashoffset 1s, stroke 0.5s"/>
+                <text x="55" y="52" text-anchor="middle" class="safety-ring-val" style="font-size:1.6rem;font-family:monospace;font-weight:700;fill:#00ff9d" id="adm-ring-val">--%</text>
+                <text x="55" y="66" text-anchor="middle" style="font-size:0.55rem;fill:rgba(200,220,240,0.5);font-family:monospace">SAFETY INDEX</text>
+              </svg>
+              <div style="display:flex;gap:16px;margin-top:4px">
+                <div style="text-align:center"><div style="font-size:1.1rem;font-family:monospace;color:var(--danger)" id="adm-stat-emergency">0</div><div style="font-size:0.58rem;color:var(--text-sec)">EMERGENCY</div></div>
+                <div style="text-align:center"><div style="font-size:1.1rem;font-family:monospace;color:#ff6b35" id="adm-stat-critical">0</div><div style="font-size:0.58rem;color:var(--text-sec)">CRITICAL</div></div>
+                <div style="text-align:center"><div style="font-size:1.1rem;font-family:monospace;color:var(--warning)" id="adm-stat-warning">0</div><div style="font-size:0.58rem;color:var(--text-sec)">WARNING</div></div>
+                <div style="text-align:center"><div style="font-size:1.1rem;font-family:monospace;color:var(--success)" id="adm-stat-online">0</div><div style="font-size:0.58rem;color:var(--text-sec)">ONLINE</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Contact Panel -->
+        <div class="adm-card">
+          <div class="adm-card-head">📞 Admin Emergency Contact</div>
+          <div class="adm-card-body">
+            <div class="contact-badge" id="adm-contact-badge">
+              <div class="contact-avatar">👤</div>
+              <div>
+                <div class="contact-info-name" id="adm-contact-name">Loading...</div>
+                <div class="contact-info-phone" id="adm-contact-phone">---</div>
+                <span class="contact-info-mode" id="adm-contact-mode">SIMULATED</span>
+              </div>
+            </div>
+            <div class="contact-btns">
+              <button class="btn-call" onclick="adminCall('status')">
+                📞 Call Admin
+              </button>
+              <button class="btn-sms" onclick="adminSMS('quick')">
+                💬 Send SMS
+              </button>
+              <button class="btn-emergency-call" onclick="adminCall('emergency')">
+                🚨 EMERGENCY CALL NOW
+              </button>
+            </div>
+            <div class="sms-compose" style="margin-top:10px">
+              <div style="font-size:0.62rem;color:var(--text-sec);margin-bottom:4px">Custom SMS Message:</div>
+              <textarea id="adm-sms-text" placeholder="Type message to admin...">Mine situation update: All systems operational.</textarea>
+              <div class="sms-send-row">
+                <button class="btn-send-sms" onclick="adminSMSCustom()">📤 Send SMS</button>
+                <button class="btn-send-sms" style="background:rgba(0,212,255,0.1);border-color:var(--accent);color:var(--accent)" onclick="adminTestComms()">🧪 Test</button>
+              </div>
+            </div>
+            <!-- Comms Log -->
+            <div style="margin-top:12px">
+              <div style="font-size:0.62rem;color:var(--text-sec);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">📋 Comms Log</div>
+              <div class="comms-log" id="adm-comms-log">
+                <div style="color:var(--text-sec);font-size:0.65rem;padding:8px 0">No calls/SMS yet</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zone Status -->
+        <div class="adm-card">
+          <div class="adm-card-head">🗺 Zone Risk Overview</div>
+          <div class="adm-card-body" id="adm-zone-bars">
+            <div style="color:var(--text-sec);font-size:0.65rem">Loading zones...</div>
+          </div>
+        </div>
+
+        <!-- Gas Readings -->
+        <div class="adm-card">
+          <div class="adm-card-head">💨 Peak Gas Readings</div>
+          <div class="adm-card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+              <div style="text-align:center;padding:8px;background:rgba(255,107,53,0.08);border-radius:6px;border:1px solid rgba(255,107,53,0.2)">
+                <div style="font-size:1.2rem;font-family:monospace;font-weight:700;color:#ff6b35" id="adm-gas-ch4">0.00%</div>
+                <div style="font-size:0.58rem;color:var(--text-sec)">CH₄ PEAK</div>
+              </div>
+              <div style="text-align:center;padding:8px;background:rgba(255,204,0,0.08);border-radius:6px;border:1px solid rgba(255,204,0,0.2)">
+                <div style="font-size:1.2rem;font-family:monospace;font-weight:700;color:var(--warning)" id="adm-gas-co">0 ppm</div>
+                <div style="font-size:0.58rem;color:var(--text-sec)">CO PEAK</div>
+              </div>
+              <div style="text-align:center;padding:8px;background:rgba(0,212,255,0.08);border-radius:6px;border:1px solid rgba(0,212,255,0.2)">
+                <div style="font-size:1.2rem;font-family:monospace;font-weight:700;color:var(--accent)" id="adm-gas-o2">21.0%</div>
+                <div style="font-size:0.58rem;color:var(--text-sec)">O₂ MIN</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /adm-left -->
+
+      <!-- RIGHT TOP: KPI bar -->
+      <div class="adm-right-top">
+        <div class="adm-kpi-bar">
+          <div class="adm-kpi info"><div class="adm-kpi-val" id="adm-kpi-total">0</div><div class="adm-kpi-label">Miners Tracked</div></div>
+          <div class="adm-kpi danger"><div class="adm-kpi-val" id="adm-kpi-emerg">0</div><div class="adm-kpi-label">Emergency</div></div>
+          <div class="adm-kpi warn"><div class="adm-kpi-val" id="adm-kpi-crit">0</div><div class="adm-kpi-label">Critical</div></div>
+          <div class="adm-kpi ok"><div class="adm-kpi-val" id="adm-kpi-safety">--%</div><div class="adm-kpi-label">Safety Score</div></div>
+          <div class="adm-kpi info"><div class="adm-kpi-val" id="adm-kpi-alerts">0</div><div class="adm-kpi-label">Active Alerts</div></div>
+          <div class="adm-kpi info"><div class="adm-kpi-val" id="adm-kpi-optim">--</div><div class="adm-kpi-label">Optim Risk</div></div>
+        </div>
+      </div>
+
+      <!-- RIGHT BOTTOM: Workers + Optimization -->
+      <div class="adm-right-bot">
+
+        <!-- High Risk Workers Table -->
+        <div class="adm-card">
+          <div class="adm-card-head">⚠️ Workers by Risk
+            <button onclick="loadAdminDash()" style="font-size:0.65rem;padding:3px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);color:var(--accent);border-radius:4px;cursor:pointer">↻ Refresh</button>
+          </div>
+          <div class="adm-card-body" id="adm-workers-list" style="max-height:280px;overflow-y:auto">
+            <div style="color:var(--text-sec);font-size:0.65rem">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Optimization Summary -->
+        <div class="adm-card">
+          <div class="adm-card-head">🧠 Optimization Engine
+            <button onclick="runOptimizationNow()" style="font-size:0.65rem;padding:3px 8px;background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.3);color:var(--success);border-radius:4px;cursor:pointer">▶ Run Now</button>
+          </div>
+          <div class="adm-card-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:0.65rem;color:var(--text-sec)">Mine Safety Score</span>
+              <span style="font-size:0.72rem;font-family:monospace;font-weight:700" id="adm-optim-score">--%</span>
+            </div>
+            <div class="optim-score-bar"><div class="optim-score-fill" id="adm-optim-bar" style="width:0%;background:var(--success)"></div></div>
+            <div style="font-size:0.62rem;color:var(--text-sec);margin:8px 0 4px">TOP ACTION ITEMS:</div>
+            <div class="optim-action-list" id="adm-optim-actions">
+              <div style="color:var(--text-sec);font-size:0.65rem">Run optimization to see recommendations</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Alerts -->
+        <div class="adm-card">
+          <div class="adm-card-head">🚨 Recent Alerts</div>
+          <div class="adm-card-body" id="adm-alerts-list" style="max-height:280px;overflow-y:auto">
+            <div style="color:var(--text-sec);font-size:0.65rem">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Evacuation Routes (for high-risk workers) -->
+        <div class="adm-card">
+          <div class="adm-card-head">🏃 Evacuation Routes (High-Risk)
+            <button onclick="loadEvacRoutes()" style="font-size:0.65rem;padding:3px 8px;background:rgba(255,45,85,0.1);border:1px solid rgba(255,45,85,0.3);color:var(--danger);border-radius:4px;cursor:pointer">↻ Recalculate</button>
+          </div>
+          <div class="adm-card-body" id="adm-evac-routes" style="max-height:280px;overflow-y:auto">
+            <div style="color:var(--text-sec);font-size:0.65rem">Loading evacuation routes...</div>
+          </div>
+        </div>
+
+      </div><!-- /adm-right-bot -->
+    </div><!-- /admindash-grid -->
+  </div><!-- /page-admindash -->
+
+  <!-- ── OPTIMIZATION PAGE ───────────────────────────────────── -->
+  <div id="page-optimization" class="page">
+    <div style="padding:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h2 style="font-size:1rem;font-weight:700;margin:0">🧠 SafeMine Optimization Engine</h2>
+        <div style="display:flex;gap:8px">
+          <button onclick="runOptimizationNow()" class="btn-primary" style="font-size:0.72rem">▶ Run Optimization Now</button>
+          <span style="font-size:0.65rem;color:var(--text-sec);align-self:center" id="optim-last-run">Never run</span>
+        </div>
+      </div>
+
+      <!-- Score banner -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px" id="optim-kpi-row">
+        <div class="adm-kpi ok" style="padding:16px"><div class="adm-kpi-val" id="optim-kpi-safety">--%</div><div class="adm-kpi-label">Safety Score</div></div>
+        <div class="adm-kpi info"><div class="adm-kpi-val" id="optim-kpi-risk">--</div><div class="adm-kpi-label">Global Risk</div></div>
+        <div class="adm-kpi warn"><div class="adm-kpi-val" id="optim-kpi-actions">--</div><div class="adm-kpi-label">Action Items</div></div>
+        <div class="adm-kpi danger"><div class="adm-kpi-val" id="optim-kpi-evac">--</div><div class="adm-kpi-label">Workers Needs Evac</div></div>
+      </div>
+
+      <div class="optim-full-grid">
+
+        <!-- Action Items -->
+        <div class="adm-card">
+          <div class="adm-card-head">📋 Action Items</div>
+          <div class="adm-card-body" id="optim-actions" style="max-height:380px;overflow-y:auto">
+            <div style="color:var(--text-sec);font-size:0.65rem">Click 'Run Optimization' to generate</div>
+          </div>
+        </div>
+
+        <!-- Ventilation Control -->
+        <div class="adm-card">
+          <div class="adm-card-head">💨 Ventilation Optimization</div>
+          <div class="adm-card-body">
+            <table class="vent-table" id="optim-vent-table">
+              <thead><tr><th>Zone</th><th>CH₄%</th><th>CO</th><th>O₂%</th><th>Fan</th><th>Action</th></tr></thead>
+              <tbody id="optim-vent-body"><tr><td colspan="6" style="color:var(--text-sec);padding:12px">Awaiting data...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Fatigue Monitor -->
+        <div class="adm-card">
+          <div class="adm-card-head">😴 Predictive Fatigue Monitor</div>
+          <div class="adm-card-body" id="optim-fatigue" style="max-height:380px;overflow-y:auto">
+            <div style="color:var(--text-sec);font-size:0.65rem">Awaiting data...</div>
+          </div>
+        </div>
+
+        <!-- Worker Distribution -->
+        <div class="adm-card">
+          <div class="adm-card-head">👷 Worker Distribution</div>
+          <div class="adm-card-body" id="optim-distribution">
+            <div style="color:var(--text-sec);font-size:0.65rem">Awaiting data...</div>
+          </div>
+        </div>
+
+        <!-- Evacuation Routes -->
+        <div class="adm-card">
+          <div class="adm-card-head">🏃 Optimal Evacuation Routes</div>
+          <div class="adm-card-body" id="optim-evac" style="max-height:380px;overflow-y:auto">
+            <div style="color:var(--text-sec);font-size:0.65rem">Run optimization to see routes</div>
+          </div>
+        </div>
+
+        <!-- Optimized Risk Scores -->
+        <div class="adm-card">
+          <div class="adm-card-head">📊 Optimized Risk Scores</div>
+          <div class="adm-card-body" id="optim-risk-scores" style="max-height:380px;overflow-y:auto">
+            <div style="color:var(--text-sec);font-size:0.65rem">Awaiting optimization run...</div>
+          </div>
+        </div>
+
+      </div><!-- /optim-full-grid -->
+    </div>
+  </div><!-- /page-optimization -->
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- All live data now comes from backend APIs via api.js; mockData.js is not loaded. -->
+  <script src="frontend/utils/api.js"></script>
+  <script src="frontend/app.js"></script>
+  <script src="frontend/admin-dashboard.js"></script>
+  <script src="frontend/bot/chatbot.js"></script>
+</body>
+
+</html>
