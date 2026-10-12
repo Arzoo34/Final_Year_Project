@@ -1,0 +1,211 @@
+/* SafeMine — login / signup (matches dashboard tokens) */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --bg-void: #020508;
+  --bg-card: #0c1822;
+  --border-accent: rgba(0, 210, 255, 0.28);
+  --accent: #00d8ff;
+  --text: #e2eff8;
+  --text-sec: #7ba8c4;
+  --danger: #ff2d55;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body.auth-body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: radial-gradient(ellipse 120% 80% at 50% -20%, rgba(0, 216, 255, 0.12), transparent 50%),
+    linear-gradient(180deg, #050c12 0%, #020508 100%);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auth-shell {
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-brand {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-brand-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.auth-brand-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #e2eff8, var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.auth-brand-sub {
+  font-size: 0.8rem;
+  color: var(--text-sec);
+  margin-top: 6px;
+}
+
+.auth-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(0, 190, 230, 0.12);
+  border-radius: var(--radius);
+  padding: 28px 26px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 210, 255, 0.06);
+}
+
+.auth-card h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.auth-card .auth-lead {
+  font-size: 0.85rem;
+  color: var(--text-sec);
+  margin: 0 0 22px;
+}
+
+.auth-field {
+  margin-bottom: 16px;
+}
+
+.auth-field label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-sec);
+  margin-bottom: 6px;
+}
+
+.auth-field input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 190, 230, 0.15);
+  background: rgba(5, 12, 18, 0.9);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.auth-field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 216, 255, 0.12);
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: 8px;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: linear-gradient(135deg, rgba(0, 216, 255, 0.25), rgba(0, 216, 255, 0.08));
+  color: var(--accent);
+  border: 1px solid var(--border-accent);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(0, 216, 255, 0.2);
+}
+
+.auth-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-error {
+  min-height: 1.25rem;
+  font-size: 0.82rem;
+  color: var(--danger);
+  margin-bottom: 10px;
+}
+
+.auth-hint {
+  font-size: 0.78rem;
+  color: var(--text-sec);
+  line-height: 1.5;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(0, 190, 230, 0.08);
+}
+
+.auth-hint code {
+  font-size: 0.72rem;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent);
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 0.88rem;
+  color: var(--text-sec);
+}
+
+.auth-footer a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Top bar links on main app */
+.auth-top-link {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent, #00d8ff);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 210, 255, 0.25);
+  margin-right: 8px;
+  align-self: center;
+}
+
+.auth-top-link:hover {
+  background: rgba(0, 216, 255, 0.08);
+}
+
+.auth-top-btn {
+  font-family: inherit;
+  cursor: pointer;
+  background: transparent;
+}
+
+.auth-top-btn[hidden],
+.auth-top-link[hidden] {
+  display: none !important;
+}
