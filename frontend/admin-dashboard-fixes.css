@@ -1,0 +1,553 @@
+/* ═══════════════════════════════════════════════════════════
+   MineGuard Pro — UI Bug Fixes v1.1
+   Fixes: layout overflow, worker name cutoff, SMS button,
+          comms log, contact badge, KPI sizing
+═══════════════════════════════════════════════════════════ */
+
+/* CSS Variables needed by admin dashboard */
+:root {
+  --surface: var(--bg-card, #0c1822);
+  --success: var(--safe, #00f5a0);
+  --text-pri: var(--text, #e2eff8);
+}
+
+/* FIX 1: Admin Dashboard page — correct positioning */
+#page-admindash {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* FIX 2: Grid — narrower left col, proper height */
+.admindash-grid {
+  grid-template-columns: 300px 1fr;
+  height: calc(100vh - 58px);
+  overflow: hidden;
+}
+
+/* FIX 3: Left column — scrollable, no horizontal overflow */
+.adm-left {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 86px);
+  padding-right: 2px;
+}
+
+/* FIX 4: Right bottom — scrollable content */
+.adm-right-bot {
+  overflow-y: auto;
+  max-height: calc(100vh - 130px);
+  padding-bottom: 20px;
+}
+
+/* FIX 5: Worker rows — full width, names don't overflow */
+.adm-worker-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.06);
+  min-width: 0;
+  flex-wrap: nowrap;
+}
+
+/* FIX 6: Contact buttons — stacked, full-width, visible */
+.contact-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+.btn-call,
+.btn-sms,
+.btn-emergency-call {
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 7px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+  display: block;
+  box-sizing: border-box;
+}
+.btn-call {
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: #00d8ff;
+}
+.btn-call:hover { background: rgba(0, 212, 255, 0.22); }
+
+.btn-sms {
+  background: rgba(0, 245, 160, 0.10);
+  border: 1px solid rgba(0, 245, 160, 0.28);
+  color: #00f5a0;
+}
+.btn-sms:hover { background: rgba(0, 245, 160, 0.20); }
+
+.btn-emergency-call {
+  background: rgba(255, 45, 85, 0.15);
+  border: 1px solid rgba(255, 45, 85, 0.45);
+  color: #ff2d55;
+  animation: emergencyBtnPulse 2s ease infinite;
+}
+.btn-emergency-call:hover { background: rgba(255, 45, 85, 0.28); }
+
+@keyframes emergencyBtnPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 45, 85, 0); }
+  50%       { box-shadow: 0 0 0 6px rgba(255, 45, 85, 0.15); }
+}
+
+/* FIX 7: SMS Compose box — properly visible and full width */
+.sms-compose {
+  margin-top: 12px;
+  width: 100%;
+}
+.sms-compose textarea,
+#adm-sms-text {
+  width: 100% !important;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 212, 255, 0.18);
+  border-radius: 6px;
+  color: #e2eff8;
+  padding: 8px 10px;
+  font-size: 0.7rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 56px;
+  box-sizing: border-box;
+  display: block;
+}
+#adm-sms-text:focus,
+.sms-compose textarea:focus {
+  border-color: #00d8ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,212,255,0.1);
+}
+
+.sms-send-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  width: 100%;
+}
+.btn-send-sms {
+  flex: 1;
+  padding: 8px 10px;
+  background: rgba(0, 245, 160, 0.12);
+  border: 1px solid rgba(0, 245, 160, 0.28);
+  color: #00f5a0;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.btn-send-sms:hover { background: rgba(0, 245, 160, 0.22); }
+
+/* FIX 8: Comms Log — scrollable box */
+.comms-log {
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 212, 255, 0.08);
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.comms-log-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.05);
+  min-width: 0;
+  font-size: 0.65rem;
+}
+.comms-log-icon { font-size: 0.9rem; flex-shrink: 0; }
+.comms-log-status {
+  font-size: 0.58rem;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.comms-log-status.sent,
+.comms-log-status.calling { background: rgba(0,245,160,0.12); color: #00f5a0; }
+.comms-log-status.simulated { background: rgba(255,179,0,0.12); color: #ffb300; }
+.comms-log-status.failed,
+.comms-log-status.error { background: rgba(255,45,85,0.12); color: #ff2d55; }
+.comms-log-status.pending { background: rgba(0,212,255,0.10); color: #00d8ff; }
+
+/* FIX 9: Contact badge */
+.contact-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,212,255,0.08);
+  margin-bottom: 6px;
+}
+.contact-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.contact-info-name  { font-size: 0.8rem; font-weight: 700; color: #e2eff8; }
+.contact-info-phone { font-size: 0.68rem; font-family: monospace; color: #00d8ff; margin-top: 2px; }
+.contact-info-mode  {
+  font-size: 0.58rem; padding: 2px 7px; border-radius: 10px;
+  background: rgba(255,179,0,0.12); color: #ffb300;
+  font-weight: 700; letter-spacing: 0.06em;
+  margin-top: 4px; display: inline-block;
+}
+.contact-info-mode:not(.sim) { background: rgba(0,245,160,0.12); color: #00f5a0; }
+
+/* FIX 10: Risk pill */
+.adm-risk-pill {
+  font-size: 0.65rem;
+  font-family: monospace;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* FIX 11: Optimization score bar */
+.optim-score-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 4px 0 10px;
+}
+.optim-score-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+
+/* FIX 12: Ventilation table */
+.vent-table { width: 100%; border-collapse: collapse; font-size: 0.68rem; }
+.vent-table th {
+  color: #7ba8c4; padding: 5px 8px; text-align: left;
+  border-bottom: 1px solid rgba(0,212,255,0.08);
+  font-weight: 600; font-size: 0.6rem;
+}
+.vent-table td { padding: 6px 8px; border-bottom: 1px solid rgba(0,212,255,0.04); }
+.vent-action-badge {
+  font-size: 0.6rem; padding: 2px 6px; border-radius: 4px;
+  font-weight: 700; letter-spacing: 0.04em; white-space: nowrap;
+}
+.vent-action-badge.NORMAL          { background: rgba(0,245,160,0.12); color: #00f5a0; }
+.vent-action-badge.MONITOR         { background: rgba(0,212,255,0.10); color: #00d8ff; }
+.vent-action-badge.INCREASE_FLOW   { background: rgba(255,179,0,0.12); color: #ffb300; }
+.vent-action-badge.EMERGENCY_BOOST {
+  background: rgba(255,45,85,0.15); color: #ff2d55;
+  animation: emergencyBtnPulse 1.5s ease infinite;
+}
+
+/* FIX 13: Fatigue row */
+.fatigue-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 9px; border-radius: 6px; margin-bottom: 5px;
+}
+
+/* FIX 14: KPI font-size scale */
+@media (max-width: 1400px) {
+  .adm-kpi-val { font-size: 1.4rem; }
+}
+@media (max-width: 1200px) {
+  .adm-kpi-val { font-size: 1.2rem; }
+  .adm-kpi-bar { grid-template-columns: repeat(3, 1fr); }
+  .admindash-grid { grid-template-columns: 270px 1fr; }
+}
+@media (max-width: 1000px) {
+  .admindash-grid { grid-template-columns: 1fr; height: auto; overflow-y: auto; }
+  .adm-left { max-height: none; grid-column: 1; grid-row: auto; }
+  .adm-right-top, .adm-right-bot { grid-column: 1; }
+  .adm-right-bot { grid-template-columns: 1fr; max-height: none; }
+}/* ═══════════════════════════════════════════════════════════
+   MineGuard Pro — UI Bug Fixes v1.1
+   Fixes: layout overflow, worker name cutoff, SMS button,
+          comms log, contact badge, KPI sizing
+═══════════════════════════════════════════════════════════ */
+
+/* CSS Variables needed by admin dashboard */
+:root {
+  --surface: var(--bg-card, #0c1822);
+  --success: var(--safe, #00f5a0);
+  --text-pri: var(--text, #e2eff8);
+}
+
+/* FIX 1: Admin Dashboard page — correct positioning */
+#page-admindash {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* FIX 2: Grid — narrower left col, proper height */
+.admindash-grid {
+  grid-template-columns: 300px 1fr;
+  height: calc(100vh - 58px);
+  overflow: hidden;
+}
+
+/* FIX 3: Left column — scrollable, no horizontal overflow */
+.adm-left {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 86px);
+  padding-right: 2px;
+}
+
+/* FIX 4: Right bottom — scrollable content */
+.adm-right-bot {
+  overflow-y: auto;
+  max-height: calc(100vh - 130px);
+  padding-bottom: 20px;
+}
+
+/* FIX 5: Worker rows — full width, names don't overflow */
+.adm-worker-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.06);
+  min-width: 0;
+  flex-wrap: nowrap;
+}
+
+/* FIX 6: Contact buttons — stacked, full-width, visible */
+.contact-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+.btn-call,
+.btn-sms,
+.btn-emergency-call {
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 7px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+  display: block;
+  box-sizing: border-box;
+}
+.btn-call {
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: #00d8ff;
+}
+.btn-call:hover { background: rgba(0, 212, 255, 0.22); }
+
+.btn-sms {
+  background: rgba(0, 245, 160, 0.10);
+  border: 1px solid rgba(0, 245, 160, 0.28);
+  color: #00f5a0;
+}
+.btn-sms:hover { background: rgba(0, 245, 160, 0.20); }
+
+.btn-emergency-call {
+  background: rgba(255, 45, 85, 0.15);
+  border: 1px solid rgba(255, 45, 85, 0.45);
+  color: #ff2d55;
+  animation: emergencyBtnPulse 2s ease infinite;
+}
+.btn-emergency-call:hover { background: rgba(255, 45, 85, 0.28); }
+
+@keyframes emergencyBtnPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 45, 85, 0); }
+  50%       { box-shadow: 0 0 0 6px rgba(255, 45, 85, 0.15); }
+}
+
+/* FIX 7: SMS Compose box — properly visible and full width */
+.sms-compose {
+  margin-top: 12px;
+  width: 100%;
+}
+.sms-compose textarea,
+#adm-sms-text {
+  width: 100% !important;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 212, 255, 0.18);
+  border-radius: 6px;
+  color: #e2eff8;
+  padding: 8px 10px;
+  font-size: 0.7rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 56px;
+  box-sizing: border-box;
+  display: block;
+}
+#adm-sms-text:focus,
+.sms-compose textarea:focus {
+  border-color: #00d8ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,212,255,0.1);
+}
+
+.sms-send-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  width: 100%;
+}
+.btn-send-sms {
+  flex: 1;
+  padding: 8px 10px;
+  background: rgba(0, 245, 160, 0.12);
+  border: 1px solid rgba(0, 245, 160, 0.28);
+  color: #00f5a0;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.btn-send-sms:hover { background: rgba(0, 245, 160, 0.22); }
+
+/* FIX 8: Comms Log — scrollable box */
+.comms-log {
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 212, 255, 0.08);
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.comms-log-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.05);
+  min-width: 0;
+  font-size: 0.65rem;
+}
+.comms-log-icon { font-size: 0.9rem; flex-shrink: 0; }
+.comms-log-status {
+  font-size: 0.58rem;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.comms-log-status.sent,
+.comms-log-status.calling { background: rgba(0,245,160,0.12); color: #00f5a0; }
+.comms-log-status.simulated { background: rgba(255,179,0,0.12); color: #ffb300; }
+.comms-log-status.failed,
+.comms-log-status.error { background: rgba(255,45,85,0.12); color: #ff2d55; }
+.comms-log-status.pending { background: rgba(0,212,255,0.10); color: #00d8ff; }
+
+/* FIX 9: Contact badge */
+.contact-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,212,255,0.08);
+  margin-bottom: 6px;
+}
+.contact-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.contact-info-name  { font-size: 0.8rem; font-weight: 700; color: #e2eff8; }
+.contact-info-phone { font-size: 0.68rem; font-family: monospace; color: #00d8ff; margin-top: 2px; }
+.contact-info-mode  {
+  font-size: 0.58rem; padding: 2px 7px; border-radius: 10px;
+  background: rgba(255,179,0,0.12); color: #ffb300;
+  font-weight: 700; letter-spacing: 0.06em;
+  margin-top: 4px; display: inline-block;
+}
+.contact-info-mode:not(.sim) { background: rgba(0,245,160,0.12); color: #00f5a0; }
+
+/* FIX 10: Risk pill */
+.adm-risk-pill {
+  font-size: 0.65rem;
+  font-family: monospace;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* FIX 11: Optimization score bar */
+.optim-score-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 4px 0 10px;
+}
+.optim-score-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+
+/* FIX 12: Ventilation table */
+.vent-table { width: 100%; border-collapse: collapse; font-size: 0.68rem; }
+.vent-table th {
+  color: #7ba8c4; padding: 5px 8px; text-align: left;
+  border-bottom: 1px solid rgba(0,212,255,0.08);
+  font-weight: 600; font-size: 0.6rem;
+}
+.vent-table td { padding: 6px 8px; border-bottom: 1px solid rgba(0,212,255,0.04); }
+.vent-action-badge {
+  font-size: 0.6rem; padding: 2px 6px; border-radius: 4px;
+  font-weight: 700; letter-spacing: 0.04em; white-space: nowrap;
+}
+.vent-action-badge.NORMAL          { background: rgba(0,245,160,0.12); color: #00f5a0; }
+.vent-action-badge.MONITOR         { background: rgba(0,212,255,0.10); color: #00d8ff; }
+.vent-action-badge.INCREASE_FLOW   { background: rgba(255,179,0,0.12); color: #ffb300; }
+.vent-action-badge.EMERGENCY_BOOST {
+  background: rgba(255,45,85,0.15); color: #ff2d55;
+  animation: emergencyBtnPulse 1.5s ease infinite;
+}
+
+/* FIX 13: Fatigue row */
+.fatigue-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 9px; border-radius: 6px; margin-bottom: 5px;
+}
+
+/* FIX 14: KPI font-size scale */
+@media (max-width: 1400px) {
+  .adm-kpi-val { font-size: 1.4rem; }
+}
+@media (max-width: 1200px) {
+  .adm-kpi-val { font-size: 1.2rem; }
+  .adm-kpi-bar { grid-template-columns: repeat(3, 1fr); }
+  .admindash-grid { grid-template-columns: 270px 1fr; }
+}
+@media (max-width: 1000px) {
+  .admindash-grid { grid-template-columns: 1fr; height: auto; overflow-y: auto; }
+  .adm-left { max-height: none; grid-column: 1; grid-row: auto; }
+  .adm-right-top, .adm-right-bot { grid-column: 1; }
+  .adm-right-bot { grid-template-columns: 1fr; max-height: none; }
+}
