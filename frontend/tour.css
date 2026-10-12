@@ -1,0 +1,116 @@
+/* SafeMine — Intro.js theme (dark HUD) */
+.introjs-tooltipReferenceLayer {
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+}
+
+.introjs-tooltip {
+  position: relative !important;
+  box-sizing: border-box !important;
+  /* Larger description panel */
+  min-width: 340px !important;
+  max-width: 520px !important;
+  width: min(94vw, 520px) !important;
+  /* Top padding so body text clears the Skip control */
+  padding: 46px 20px 20px !important;
+  background: var(--bg-card, #0c1822) !important;
+  color: var(--text, #e2eff8) !important;
+  border: 1px solid rgba(0, 210, 255, 0.28) !important;
+  border-radius: var(--radius, 12px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 210, 255, 0.08) !important;
+}
+
+.introjs-tooltiptext {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  max-height: min(42vh, 320px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Skip: top-right of tooltip (out of the bottom button row) */
+.introjs-tooltip .introjs-skipbutton {
+  position: absolute !important;
+  top: 12px !important;
+  right: 14px !important;
+  left: auto !important;
+  bottom: auto !important;
+  margin: 0 !important;
+  z-index: 5;
+  padding: 6px 12px !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(0, 210, 255, 0.25) !important;
+  border-radius: 8px !important;
+  background: rgba(5, 12, 18, 0.96) !important;
+  color: var(--text-sec, #7ba8c4) !important;
+}
+
+.introjs-tooltip .introjs-skipbutton:hover {
+  color: var(--accent, #00d8ff) !important;
+  border-color: rgba(0, 210, 255, 0.45) !important;
+  background: rgba(0, 216, 255, 0.08) !important;
+}
+
+/* Bottom row: Prev / Next only — align nicely without Skip */
+.introjs-tooltipbuttons {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid rgba(0, 190, 230, 0.1);
+}
+
+.introjs-button {
+  font-family: var(--font-display, 'Syne', sans-serif) !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+  border-radius: 8px !important;
+  padding: 0.45rem 0.85rem !important;
+}
+
+.introjs-button.introjs-nextbutton,
+.introjs-button.introjs-donebutton {
+  background: linear-gradient(135deg, rgba(0, 216, 255, 0.22), rgba(0, 216, 255, 0.06)) !important;
+  color: var(--accent, #00d8ff) !important;
+  border: 1px solid rgba(0, 210, 255, 0.35) !important;
+}
+
+.introjs-button.introjs-prevbutton {
+  background: rgba(12, 24, 34, 0.9) !important;
+  color: var(--text-sec, #7ba8c4) !important;
+  border: 1px solid rgba(0, 190, 230, 0.15) !important;
+}
+
+.introjs-progress {
+  background: rgba(0, 190, 230, 0.12) !important;
+  border-radius: 4px !important;
+}
+
+.introjs-progressbar {
+  background: var(--accent, #00d8ff) !important;
+}
+
+.introjs-bullets ul li a {
+  background: rgba(0, 190, 230, 0.2) !important;
+}
+
+.introjs-bullets ul li a.active {
+  background: var(--accent, #00d8ff) !important;
+}
+
+.introjs-arrow.top,
+.introjs-arrow.bottom,
+.introjs-arrow.left,
+.introjs-arrow.right {
+  border-color: transparent !important;
+}
+
+.introjs-helperLayer {
+  border-radius: var(--radius-sm, 8px) !important;
+  box-shadow: 0 0 0 2px rgba(0, 216, 255, 0.35), 0 0 24px rgba(0, 216, 255, 0.15) !important;
+}
