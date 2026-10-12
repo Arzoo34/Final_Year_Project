@@ -1,0 +1,27 @@
+/* ============================================================
+   MineGuard Pro — Extended Features CSS v3.0
+   All styles consolidated into styles.css; this file is a
+   compatibility shim + any supplemental additions only.
+   ============================================================ */
+
+/* Kept for backward compatibility — main styles live in styles.css */
+
+/* Extra AI chat overrides */
+.ai-textarea {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  resize: none;
+  outline: none;
+  transition: all 0.2s;
+}
+.ai-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.08);
+}
+.ai-textarea::placeholder { color: var(--text-dim); }
