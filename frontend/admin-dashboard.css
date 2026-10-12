@@ -1,0 +1,647 @@
+/* ============================================================
+   MineGuard Pro — Admin Dashboard + Optimization + Comms CSS
+   Appended to new-features.css
+   ============================================================ */
+
+/* ── Admin Dashboard Page ───────────────────────────────────── */
+#page-admindash { padding: 0; }
+
+.admindash-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 14px;
+  padding: 14px;
+  height: calc(100vh - 56px);
+  box-sizing: border-box;
+}
+
+/* Left column: status + contact */
+.adm-left  { grid-column: 1; grid-row: 1 / 3; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+/* Right top: KPIs */
+.adm-right-top { grid-column: 2; grid-row: 1; }
+/* Right bottom: tables + optimization */
+.adm-right-bot { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; overflow-y: auto; }
+
+/* ── Admin KPI bar ───────────────────────────────────────────── */
+.adm-kpi-bar {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.adm-kpi {
+  background: var(--surface);
+  border: 1px solid rgba(0,212,255,0.12);
+  border-radius: 8px;
+  padding: 14px 12px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.adm-kpi::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--kpi-color, var(--accent));
+}
+.adm-kpi-val {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--kpi-color, var(--accent));
+  line-height: 1;
+}
+.adm-kpi-label {
+  font-size: 0.6rem;
+  color: var(--text-sec);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+.adm-kpi.danger { --kpi-color: var(--danger); }
+.adm-kpi.warn   { --kpi-color: var(--warning); }
+.adm-kpi.ok     { --kpi-color: var(--success); }
+.adm-kpi.info   { --kpi-color: var(--accent); }
+
+/* ── Admin Card ─────────────────────────────────────────────── */
+.adm-card {
+  background: var(--surface);
+  border: 1px solid rgba(0,212,255,0.10);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.adm-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(0,212,255,0.04);
+  border-bottom: 1px solid rgba(0,212,255,0.08);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.adm-card-body { padding: 12px 14px; }
+
+/* ── Safety Score Ring ───────────────────────────────────────── */
+.safety-ring-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 0;
+}
+.safety-ring-svg { width: 110px; height: 110px; }
+.safety-ring-val {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  fill: var(--accent);
+}
+.safety-ring-label { font-size: 0.6rem; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ── Zone Status Bars ────────────────────────────────────────── */
+.zone-bar-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 0; border-bottom: 1px solid rgba(0,212,255,0.05);
+}
+.zone-bar-row:last-child { border-bottom: none; }
+.zone-bar-name { font-size: 0.68rem; color: var(--text-pri); min-width: 64px; font-family: var(--font-mono); }
+.zone-bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.zone-bar-fill  { height: 100%; border-radius: 3px; transition: width 0.5s; }
+.zone-bar-risk  { font-size: 0.65rem; font-family: var(--font-mono); min-width: 34px; text-align: right; }
+.zone-status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── Contact Panel ───────────────────────────────────────────── */
+.contact-badge {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: rgba(0,212,255,0.06);
+  border-radius: 8px;
+  border: 1px solid rgba(0,212,255,0.15);
+  margin-bottom: 10px;
+}
+.contact-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #00d4ff22, #00ff9d22);
+  border: 1.5px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
+}
+.contact-info-name { font-size: 0.82rem; font-weight: 600; color: var(--text-pri); }
+.contact-info-phone { font-size: 0.7rem; font-family: var(--font-mono); color: var(--accent); }
+.contact-info-mode {
+  font-size: 0.58rem;
+  padding: 2px 6px; border-radius: 3px;
+  background: rgba(0,255,157,0.12); color: var(--success);
+  display: inline-block; margin-top: 2px;
+}
+.contact-info-mode.sim { background: rgba(255,204,0,0.12); color: var(--warning); }
+
+.contact-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.btn-call {
+  background: linear-gradient(135deg, #00d4ff22, #00d4ff11);
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  padding: 9px; border-radius: 7px;
+  font-size: 0.72rem; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all 0.2s;
+}
+.btn-call:hover { background: rgba(0,212,255,0.2); transform: translateY(-1px); }
+.btn-sms {
+  background: linear-gradient(135deg, #00ff9d22, #00ff9d11);
+  border: 1.5px solid var(--success);
+  color: var(--success);
+  padding: 9px; border-radius: 7px;
+  font-size: 0.72rem; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all 0.2s;
+}
+.btn-sms:hover  { background: rgba(0,255,157,0.2); transform: translateY(-1px); }
+.btn-emergency-call {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(255,45,85,0.25), rgba(255,45,85,0.1));
+  border: 1.5px solid var(--danger);
+  color: var(--danger);
+  padding: 10px; border-radius: 7px;
+  font-size: 0.78rem; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  animation: pulse-danger 2s infinite;
+  transition: all 0.2s;
+}
+.btn-emergency-call:hover { background: rgba(255,45,85,0.35); }
+@keyframes pulse-danger {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,45,85,0.4); }
+  50%      { box-shadow: 0 0 0 6px rgba(255,45,85,0); }
+}
+
+/* SMS compose box */
+.sms-compose { margin-top: 10px; }
+.sms-compose textarea {
+  width: 100%; box-sizing: border-box;
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(0,212,255,0.15);
+  color: var(--text-pri); border-radius: 6px;
+  padding: 8px; font-size: 0.72rem; font-family: var(--font-mono);
+  resize: vertical; min-height: 60px;
+}
+.sms-compose textarea:focus { outline: none; border-color: var(--accent); }
+.sms-send-row { display: flex; gap: 6px; margin-top: 6px; }
+.btn-send-sms {
+  flex: 1; padding: 7px; border-radius: 6px;
+  background: rgba(0,255,157,0.12); border: 1px solid var(--success);
+  color: var(--success); font-size: 0.7rem; font-weight: 600; cursor: pointer;
+}
+
+/* Call/SMS log */
+.comms-log { max-height: 200px; overflow-y: auto; }
+.comms-log-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid rgba(0,212,255,0.05);
+  font-size: 0.68rem;
+}
+.comms-log-icon { font-size: 0.9rem; flex-shrink: 0; }
+.comms-log-status {
+  padding: 1px 5px; border-radius: 3px;
+  font-size: 0.58rem; font-weight: 600;
+}
+.comms-log-status.sent     { background: rgba(0,255,157,0.15); color: var(--success); }
+.comms-log-status.simulated{ background: rgba(255,204,0,0.15); color: var(--warning); }
+.comms-log-status.calling  { background: rgba(0,212,255,0.15); color: var(--accent); }
+.comms-log-status.failed   { background: rgba(255,45,85,0.15); color: var(--danger); }
+.comms-log-status.pending  { background: rgba(255,255,255,0.08); color: var(--text-sec); }
+
+/* ── Optimization Panel ──────────────────────────────────────── */
+.optim-score-bar {
+  height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin: 4px 0 10px;
+}
+.optim-score-fill { height: 100%; border-radius: 4px; transition: width 0.8s ease; }
+
+.optim-action-list { display: flex; flex-direction: column; gap: 6px; }
+.optim-action-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 10px; border-radius: 7px;
+  border-left: 3px solid;
+  background: rgba(255,255,255,0.03);
+  font-size: 0.68rem;
+}
+.optim-action-item.IMMEDIATE { border-color: var(--danger); }
+.optim-action-item.HIGH      { border-color: var(--warning); }
+.optim-action-item.MEDIUM    { border-color: var(--accent); }
+.optim-action-urgency {
+  font-size: 0.6rem; font-weight: 700; padding: 1px 5px; border-radius: 3px; flex-shrink: 0;
+}
+.optim-action-urgency.IMMEDIATE { background: rgba(255,45,85,0.2); color: var(--danger); }
+.optim-action-urgency.HIGH      { background: rgba(255,204,0,0.15); color: var(--warning); }
+.optim-action-urgency.MEDIUM    { background: rgba(0,212,255,0.12); color: var(--accent); }
+.optim-action-msg  { font-weight: 600; color: var(--text-pri); }
+.optim-action-detail { color: var(--text-sec); margin-top: 1px; }
+
+/* Ventilation table */
+.vent-table { width: 100%; border-collapse: collapse; font-size: 0.68rem; }
+.vent-table th {
+  padding: 5px 8px; text-align: left;
+  color: var(--accent); font-size: 0.6rem;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1px solid rgba(0,212,255,0.1);
+}
+.vent-table td { padding: 6px 8px; border-bottom: 1px solid rgba(0,212,255,0.04); }
+.vent-table tr:last-child td { border-bottom: none; }
+.vent-action-badge {
+  padding: 2px 6px; border-radius: 3px;
+  font-size: 0.6rem; font-weight: 700;
+}
+.vent-action-badge.EMERGENCY_BOOST { background: rgba(255,45,85,0.2); color: var(--danger); }
+.vent-action-badge.INCREASE_FLOW   { background: rgba(255,204,0,0.15); color: var(--warning); }
+.vent-action-badge.MONITOR         { background: rgba(0,212,255,0.12); color: var(--accent); }
+.vent-action-badge.NORMAL          { background: rgba(0,255,157,0.1); color: var(--success); }
+
+/* Workers risk table in admin */
+.adm-worker-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid rgba(0,212,255,0.05);
+  font-size: 0.68rem;
+}
+.adm-worker-row:last-child { border-bottom: none; }
+.adm-worker-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700; flex-shrink: 0;
+}
+.adm-risk-pill {
+  padding: 2px 7px; border-radius: 10px;
+  font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; flex-shrink: 0;
+}
+
+/* Fatigue heatmap */
+.fatigue-grid { display: flex; flex-direction: column; gap: 5px; }
+.fatigue-row {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+  border-radius: 6px; font-size: 0.68rem;
+}
+.fatigue-bar-wrap { flex: 1; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.fatigue-bar { height: 100%; border-radius: 3px; }
+.fatigue-rec {
+  font-size: 0.58rem; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; font-weight: 600;
+}
+
+/* Evacuation route card */
+.evac-route-card {
+  padding: 8px 10px; border-radius: 7px;
+  background: rgba(255,45,85,0.06); border: 1px solid rgba(255,45,85,0.2);
+  margin-bottom: 6px; font-size: 0.68rem;
+}
+.evac-route-path {
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 4px;
+}
+.evac-route-node {
+  padding: 2px 6px; border-radius: 3px;
+  background: rgba(0,212,255,0.1); color: var(--accent);
+  font-size: 0.62rem; font-family: var(--font-mono);
+}
+.evac-route-arrow { color: var(--text-sec); font-size: 0.7rem; }
+
+/* Optimization page */
+#page-optimization { padding: 14px; }
+.optim-full-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+/* Live activity feed */
+.activity-feed { max-height: 280px; overflow-y: auto; }
+.activity-item {
+  display: flex; gap: 8px; padding: 7px 0;
+  border-bottom: 1px solid rgba(0,212,255,0.05); font-size: 0.68rem;
+}
+.activity-time { font-family: var(--font-mono); color: var(--text-sec); flex-shrink: 0; font-size: 0.62rem; min-width: 56px; }
+.activity-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+
+/* Responsive fallback */
+@media (max-width: 1100px) {
+  .admindash-grid { grid-template-columns: 1fr; height: auto; }
+  .adm-left { grid-column: 1; grid-row: auto; }
+  .adm-right-top { grid-column: 1; }
+  .adm-right-bot { grid-column: 1; grid-template-columns: 1fr; }
+  .adm-kpi-bar { grid-template-columns: repeat(3, 1fr); }
+  .optim-full-grid { grid-template-columns: 1fr; }
+}/* ============================================================
+   MineGuard Pro — Admin Dashboard + Optimization + Comms CSS
+   Appended to new-features.css
+   ============================================================ */
+
+/* ── Admin Dashboard Page ───────────────────────────────────── */
+#page-admindash { padding: 0; }
+
+.admindash-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 14px;
+  padding: 14px;
+  height: calc(100vh - 56px);
+  box-sizing: border-box;
+}
+
+/* Left column: status + contact */
+.adm-left  { grid-column: 1; grid-row: 1 / 3; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+/* Right top: KPIs */
+.adm-right-top { grid-column: 2; grid-row: 1; }
+/* Right bottom: tables + optimization */
+.adm-right-bot { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; overflow-y: auto; }
+
+/* ── Admin KPI bar ───────────────────────────────────────────── */
+.adm-kpi-bar {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.adm-kpi {
+  background: var(--surface);
+  border: 1px solid rgba(0,212,255,0.12);
+  border-radius: 8px;
+  padding: 14px 12px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.adm-kpi::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--kpi-color, var(--accent));
+}
+.adm-kpi-val {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--kpi-color, var(--accent));
+  line-height: 1;
+}
+.adm-kpi-label {
+  font-size: 0.6rem;
+  color: var(--text-sec);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+.adm-kpi.danger { --kpi-color: var(--danger); }
+.adm-kpi.warn   { --kpi-color: var(--warning); }
+.adm-kpi.ok     { --kpi-color: var(--success); }
+.adm-kpi.info   { --kpi-color: var(--accent); }
+
+/* ── Admin Card ─────────────────────────────────────────────── */
+.adm-card {
+  background: var(--surface);
+  border: 1px solid rgba(0,212,255,0.10);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.adm-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(0,212,255,0.04);
+  border-bottom: 1px solid rgba(0,212,255,0.08);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.adm-card-body { padding: 12px 14px; }
+
+/* ── Safety Score Ring ───────────────────────────────────────── */
+.safety-ring-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 0;
+}
+.safety-ring-svg { width: 110px; height: 110px; }
+.safety-ring-val {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  fill: var(--accent);
+}
+.safety-ring-label { font-size: 0.6rem; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ── Zone Status Bars ────────────────────────────────────────── */
+.zone-bar-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 0; border-bottom: 1px solid rgba(0,212,255,0.05);
+}
+.zone-bar-row:last-child { border-bottom: none; }
+.zone-bar-name { font-size: 0.68rem; color: var(--text-pri); min-width: 64px; font-family: var(--font-mono); }
+.zone-bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.zone-bar-fill  { height: 100%; border-radius: 3px; transition: width 0.5s; }
+.zone-bar-risk  { font-size: 0.65rem; font-family: var(--font-mono); min-width: 34px; text-align: right; }
+.zone-status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── Contact Panel ───────────────────────────────────────────── */
+.contact-badge {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: rgba(0,212,255,0.06);
+  border-radius: 8px;
+  border: 1px solid rgba(0,212,255,0.15);
+  margin-bottom: 10px;
+}
+.contact-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #00d4ff22, #00ff9d22);
+  border: 1.5px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
+}
+.contact-info-name { font-size: 0.82rem; font-weight: 600; color: var(--text-pri); }
+.contact-info-phone { font-size: 0.7rem; font-family: var(--font-mono); color: var(--accent); }
+.contact-info-mode {
+  font-size: 0.58rem;
+  padding: 2px 6px; border-radius: 3px;
+  background: rgba(0,255,157,0.12); color: var(--success);
+  display: inline-block; margin-top: 2px;
+}
+.contact-info-mode.sim { background: rgba(255,204,0,0.12); color: var(--warning); }
+
+.contact-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.btn-call {
+  background: linear-gradient(135deg, #00d4ff22, #00d4ff11);
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  padding: 9px; border-radius: 7px;
+  font-size: 0.72rem; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all 0.2s;
+}
+.btn-call:hover { background: rgba(0,212,255,0.2); transform: translateY(-1px); }
+.btn-sms {
+  background: linear-gradient(135deg, #00ff9d22, #00ff9d11);
+  border: 1.5px solid var(--success);
+  color: var(--success);
+  padding: 9px; border-radius: 7px;
+  font-size: 0.72rem; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all 0.2s;
+}
+.btn-sms:hover  { background: rgba(0,255,157,0.2); transform: translateY(-1px); }
+.btn-emergency-call {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(255,45,85,0.25), rgba(255,45,85,0.1));
+  border: 1.5px solid var(--danger);
+  color: var(--danger);
+  padding: 10px; border-radius: 7px;
+  font-size: 0.78rem; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  animation: pulse-danger 2s infinite;
+  transition: all 0.2s;
+}
+.btn-emergency-call:hover { background: rgba(255,45,85,0.35); }
+@keyframes pulse-danger {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,45,85,0.4); }
+  50%      { box-shadow: 0 0 0 6px rgba(255,45,85,0); }
+}
+
+/* SMS compose box */
+.sms-compose { margin-top: 10px; }
+.sms-compose textarea {
+  width: 100%; box-sizing: border-box;
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(0,212,255,0.15);
+  color: var(--text-pri); border-radius: 6px;
+  padding: 8px; font-size: 0.72rem; font-family: var(--font-mono);
+  resize: vertical; min-height: 60px;
+}
+.sms-compose textarea:focus { outline: none; border-color: var(--accent); }
+.sms-send-row { display: flex; gap: 6px; margin-top: 6px; }
+.btn-send-sms {
+  flex: 1; padding: 7px; border-radius: 6px;
+  background: rgba(0,255,157,0.12); border: 1px solid var(--success);
+  color: var(--success); font-size: 0.7rem; font-weight: 600; cursor: pointer;
+}
+
+/* Call/SMS log */
+.comms-log { max-height: 200px; overflow-y: auto; }
+.comms-log-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid rgba(0,212,255,0.05);
+  font-size: 0.68rem;
+}
+.comms-log-icon { font-size: 0.9rem; flex-shrink: 0; }
+.comms-log-status {
+  padding: 1px 5px; border-radius: 3px;
+  font-size: 0.58rem; font-weight: 600;
+}
+.comms-log-status.sent     { background: rgba(0,255,157,0.15); color: var(--success); }
+.comms-log-status.simulated{ background: rgba(255,204,0,0.15); color: var(--warning); }
+.comms-log-status.calling  { background: rgba(0,212,255,0.15); color: var(--accent); }
+.comms-log-status.failed   { background: rgba(255,45,85,0.15); color: var(--danger); }
+.comms-log-status.pending  { background: rgba(255,255,255,0.08); color: var(--text-sec); }
+
+/* ── Optimization Panel ──────────────────────────────────────── */
+.optim-score-bar {
+  height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin: 4px 0 10px;
+}
+.optim-score-fill { height: 100%; border-radius: 4px; transition: width 0.8s ease; }
+
+.optim-action-list { display: flex; flex-direction: column; gap: 6px; }
+.optim-action-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 10px; border-radius: 7px;
+  border-left: 3px solid;
+  background: rgba(255,255,255,0.03);
+  font-size: 0.68rem;
+}
+.optim-action-item.IMMEDIATE { border-color: var(--danger); }
+.optim-action-item.HIGH      { border-color: var(--warning); }
+.optim-action-item.MEDIUM    { border-color: var(--accent); }
+.optim-action-urgency {
+  font-size: 0.6rem; font-weight: 700; padding: 1px 5px; border-radius: 3px; flex-shrink: 0;
+}
+.optim-action-urgency.IMMEDIATE { background: rgba(255,45,85,0.2); color: var(--danger); }
+.optim-action-urgency.HIGH      { background: rgba(255,204,0,0.15); color: var(--warning); }
+.optim-action-urgency.MEDIUM    { background: rgba(0,212,255,0.12); color: var(--accent); }
+.optim-action-msg  { font-weight: 600; color: var(--text-pri); }
+.optim-action-detail { color: var(--text-sec); margin-top: 1px; }
+
+/* Ventilation table */
+.vent-table { width: 100%; border-collapse: collapse; font-size: 0.68rem; }
+.vent-table th {
+  padding: 5px 8px; text-align: left;
+  color: var(--accent); font-size: 0.6rem;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1px solid rgba(0,212,255,0.1);
+}
+.vent-table td { padding: 6px 8px; border-bottom: 1px solid rgba(0,212,255,0.04); }
+.vent-table tr:last-child td { border-bottom: none; }
+.vent-action-badge {
+  padding: 2px 6px; border-radius: 3px;
+  font-size: 0.6rem; font-weight: 700;
+}
+.vent-action-badge.EMERGENCY_BOOST { background: rgba(255,45,85,0.2); color: var(--danger); }
+.vent-action-badge.INCREASE_FLOW   { background: rgba(255,204,0,0.15); color: var(--warning); }
+.vent-action-badge.MONITOR         { background: rgba(0,212,255,0.12); color: var(--accent); }
+.vent-action-badge.NORMAL          { background: rgba(0,255,157,0.1); color: var(--success); }
+
+/* Workers risk table in admin */
+.adm-worker-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid rgba(0,212,255,0.05);
+  font-size: 0.68rem;
+}
+.adm-worker-row:last-child { border-bottom: none; }
+.adm-worker-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700; flex-shrink: 0;
+}
+.adm-risk-pill {
+  padding: 2px 7px; border-radius: 10px;
+  font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; flex-shrink: 0;
+}
+
+/* Fatigue heatmap */
+.fatigue-grid { display: flex; flex-direction: column; gap: 5px; }
+.fatigue-row {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+  border-radius: 6px; font-size: 0.68rem;
+}
+.fatigue-bar-wrap { flex: 1; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.fatigue-bar { height: 100%; border-radius: 3px; }
+.fatigue-rec {
+  font-size: 0.58rem; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; font-weight: 600;
+}
+
+/* Evacuation route card */
+.evac-route-card {
+  padding: 8px 10px; border-radius: 7px;
+  background: rgba(255,45,85,0.06); border: 1px solid rgba(255,45,85,0.2);
+  margin-bottom: 6px; font-size: 0.68rem;
+}
+.evac-route-path {
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 4px;
+}
+.evac-route-node {
+  padding: 2px 6px; border-radius: 3px;
+  background: rgba(0,212,255,0.1); color: var(--accent);
+  font-size: 0.62rem; font-family: var(--font-mono);
+}
+.evac-route-arrow { color: var(--text-sec); font-size: 0.7rem; }
+
+/* Optimization page */
+#page-optimization { padding: 14px; }
+.optim-full-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+/* Live activity feed */
+.activity-feed { max-height: 280px; overflow-y: auto; }
+.activity-item {
+  display: flex; gap: 8px; padding: 7px 0;
+  border-bottom: 1px solid rgba(0,212,255,0.05); font-size: 0.68rem;
+}
+.activity-time { font-family: var(--font-mono); color: var(--text-sec); flex-shrink: 0; font-size: 0.62rem; min-width: 56px; }
+.activity-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+
+/* Responsive fallback */
+@media (max-width: 1100px) {
+  .admindash-grid { grid-template-columns: 1fr; height: auto; }
+  .adm-left { grid-column: 1; grid-row: auto; }
+  .adm-right-top { grid-column: 1; }
+  .adm-right-bot { grid-column: 1; grid-template-columns: 1fr; }
+  .adm-kpi-bar { grid-template-columns: repeat(3, 1fr); }
+  .optim-full-grid { grid-template-columns: 1fr; }
+}
